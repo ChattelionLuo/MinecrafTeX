@@ -1,0 +1,16 @@
+% MinecrafTeX example -- compile with: lualatex example.tex
+% (or: xelatex example.tex). Requires the font built at ../font/dist/.
+\documentclass[12pt]{article}
+\usepackage[scale=1.6]{minecraftex}
+\pagestyle{empty}
+
+\begin{document}
+% NOTE (proof-of-concept): the bundled font currently covers only a small
+% glyph subset, so unicode-math overlays Latin Modern Math for symbols it does
+% not yet provide. Full pixel math in LaTeX needs the math-alphanumeric glyphs
+% + MathVariants (roadmap Phase 2/3). The display layout below still exercises
+% the MATH table (fraction, radical, integral/sum limits, sub/superscripts).
+\[
+  \int_{0}^{1} \frac{\sqrt{x}}{n}\,dx \;=\; \sum_{k} a_k
+\]
+\end{document}

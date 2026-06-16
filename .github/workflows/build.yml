@@ -1,0 +1,27 @@
+name: build
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  font:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install deps
+        run: pip install -r font/requirements.txt pytest
+      - name: Build font
+        run: python font/build_font.py
+      - name: Test
+        run: pytest tests/test_font.py -q
+      - name: Upload font artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: minecraftex-font
+          path: |
+            font/dist/MinecrafTeX-Math.ttf
+            font/dist/MinecrafTeX-Math.woff2

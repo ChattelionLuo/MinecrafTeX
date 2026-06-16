@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>MinecrafTeX — pixel math on the web</title>
+
+<!-- Temml: converts LaTeX -> MathML, designed to use an OpenType MATH font. -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/temml/dist/Temml-Local.css" />
+<script src="https://cdn.jsdelivr.net/npm/temml/dist/temml.min.js"></script>
+
+<style>
+  /* Ship the same pixel MATH font the LaTeX package uses. */
+  @font-face {
+    font-family: "MinecrafTeX Math";
+    src: url("../../font/dist/MinecrafTeX-Math.woff2") format("woff2");
+    font-display: swap;
+  }
+  body {
+    background: #2b2b2b; color: #e8e8e8;
+    font-family: "MinecrafTeX Math", monospace;
+    margin: 0; padding: 2rem;
+  }
+  h1 { font-size: 1.4rem; }
+  /* Force the browser's native MathML rendering to use our pixel font. */
+  math, math * { font-family: "MinecrafTeX Math", serif !important; }
+  .eq {
+    background: #1c1c1c; border: 2px solid #555; border-radius: 4px;
+    padding: 1.5rem; margin: 1rem 0; font-size: 2.5rem; overflow-x: auto;
+  }
+  /* Keep raster fallbacks crisp; harmless for the vector font. */
+  .eq { image-rendering: pixelated; }
+  code { color: #9ad; }
+</style>
+</head>
+<body>
+  <h1>MinecrafTeX — real LaTeX, Minecraft pixels</h1>
+  <p>These equations are written in plain LaTeX and rendered as MathML using the
+     pixel MATH font. Native MathML support is best in Firefox.</p>
+
+  <div class="eq" id="eq1"></div>
+  <p>Source: <code>\int_{0}^{1} \frac{\sqrt{x}}{n}\,dx = \sum_{k} a_k</code></p>
+
+  <div class="eq" id="eq2"></div>
+  <p>Source: <code>a + n = k</code></p>
+
+<script>
+  const render = (tex, id, display) =>
+    temml.render(tex, document.getElementById(id), { displayMode: display });
+  render(String.raw`\int_{0}^{1} \frac{\sqrt{x}}{n}\,dx = \sum_{k} a_k`, "eq1", true);
+  render(String.raw`a + n = k`, "eq2", true);
+</script>
+</body>
+</html>

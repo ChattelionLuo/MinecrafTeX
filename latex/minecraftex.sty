@@ -1,0 +1,35 @@
+%% minecraftex.sty -- typeset math in Minecraft pixel style
+%% Part of MinecrafTeX. MIT-licensed (see LICENSE); the loaded font is OFL 1.1.
+%%
+%% Requires a Unicode TeX engine: compile with lualatex or xelatex.
+%%
+%% Usage:
+%%     \usepackage{minecraftex}            % uses the bundled dist font
+%%     \usepackage[scale=1.4]{minecraftex} % scale the pixel font up
+%%
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{minecraftex}[2026/06/16 v0.1 MinecrafTeX pixel math]
+
+\RequirePackage{kvoptions}
+\SetupKeyvalOptions{family=mctex,prefix=mctex@}
+% Font scale (keep an integer-ish multiple to preserve crisp pixels).
+\DeclareStringOption[1.0]{scale}
+% Path to the directory holding MinecrafTeX-Math.ttf.
+\DeclareStringOption[../font/dist/]{fontpath}
+\ProcessKeyvalOptions*
+
+\RequirePackage{fontspec}
+\RequirePackage{unicode-math}
+
+% Load the pixel math font as BOTH the math font and the upright text font so
+% that text and equations match.
+\setmathfont{MinecrafTeX-Math.ttf}[
+  Path=\mctex@fontpath ,
+  Scale=\mctex@scale ,
+]
+\setmainfont{MinecrafTeX-Math.ttf}[
+  Path=\mctex@fontpath ,
+  Scale=\mctex@scale ,
+]
+
+\endinput

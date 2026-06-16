@@ -1,0 +1,27 @@
+{
+  "name": "minecraftex",
+  "version": "0.1.0",
+  "description": "Typeset real LaTeX math in authentic Minecraft pixel style (LaTeX->MathML via Temml + a pixel OpenType MATH font).",
+  "license": "MIT",
+  "keywords": [
+    "latex",
+    "math",
+    "mathml",
+    "minecraft",
+    "pixel",
+    "font",
+    "temml"
+  ],
+  "files": [
+    "src/",
+    "dist/"
+  ],
+  "main": "src/index.js",
+  "scripts": {
+    "copy-font": "node scripts/copy-font.js",
+    "serve": "npx --yes serve ."
+  },
+  "peerDependencies": {
+    "temml": "^0.10.34"
+  }
+}
