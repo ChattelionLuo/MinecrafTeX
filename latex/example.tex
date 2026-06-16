@@ -1,16 +1,38 @@
 % MinecrafTeX example -- compile with: lualatex example.tex
-% (or: xelatex example.tex). Requires the font built at ../font/dist/.
+% (or xelatex example.tex). Requires the font built at ../font/dist/.
+%
+% Everything below is ordinary LaTeX/amsmath. MinecrafTeX renders it entirely in
+% Minecraft pixels, and the delimiters / radicals / big operators GROW to fit
+% their content via the font's OpenType MATH table.
 \documentclass[12pt]{article}
-\usepackage[scale=1.6]{minecraftex}
+\usepackage[scale=2.2]{minecraftex}
+\usepackage{amsmath}
 \pagestyle{empty}
 
 \begin{document}
-% NOTE (proof-of-concept): the bundled font currently covers only a small
-% glyph subset, so unicode-math overlays Latin Modern Math for symbols it does
-% not yet provide. Full pixel math in LaTeX needs the math-alphanumeric glyphs
-% + MathVariants (roadmap Phase 2/3). The display layout below still exercises
-% the MATH table (fraction, radical, integral/sum limits, sub/superscripts).
+\thispagestyle{empty}
+
+% Adaptive delimiters stretch around a tall fraction; sqrt and the bar grow too.
 \[
-  \int_{0}^{1} \frac{\sqrt{x}}{n}\,dx \;=\; \sum_{k} a_k
+  \left( \frac{\sqrt{x}}{n} \right)
+  \;=\;
+  \int_{0}^{1} \sqrt{x}\,dx
+  \;=\;
+  \sum_{k=1}^{n} a_k
 \]
+
+% Brackets, braces and bars all stretch to their contents.
+\[
+  \left[ \frac{a}{b} \right]
+  \qquad
+  \left\{ \frac{1}{1+x} \right\}
+  \qquad
+  \left| \frac{p}{q} \right|
+\]
+
+% Nested fractions force taller delimiters automatically.
+\[
+  f(x) = \left( 1 + \frac{1}{\,1 + \frac{1}{x}\,} \right)
+\]
+
 \end{document}

@@ -36,19 +36,25 @@
 <body>
   <h1>MinecrafTeX — real LaTeX, Minecraft pixels</h1>
   <p>These equations are written in plain LaTeX and rendered as MathML using the
-     pixel MATH font. Native MathML support is best in Firefox.</p>
+     pixel MATH font. The delimiters, integrals, sums and radicals <em>grow to fit
+     their content</em> via the OpenType MATH table — the same adaptive layout you
+     get in LaTeX. Native MathML support is best in Firefox.</p>
 
   <div class="eq" id="eq1"></div>
-  <p>Source: <code>\int_{0}^{1} \frac{\sqrt{x}}{n}\,dx = \sum_{k} a_k</code></p>
+  <p>Source: <code>\left( \frac{\sqrt{x}}{n} \right) = \int_{0}^{1} \sqrt{x}\,dx = \sum_{k=1}^{n} a_k</code></p>
 
   <div class="eq" id="eq2"></div>
+  <p>Source: <code>f(x) = \left( 1 + \cfrac{1}{1 + \frac{1}{x}} \right)</code></p>
+
+  <div class="eq" id="eq3"></div>
   <p>Source: <code>a + n = k</code></p>
 
 <script>
   const render = (tex, id, display) =>
     temml.render(tex, document.getElementById(id), { displayMode: display });
-  render(String.raw`\int_{0}^{1} \frac{\sqrt{x}}{n}\,dx = \sum_{k} a_k`, "eq1", true);
-  render(String.raw`a + n = k`, "eq2", true);
+  render(String.raw`\left( \frac{\sqrt{x}}{n} \right) = \int_{0}^{1} \sqrt{x}\,dx = \sum_{k=1}^{n} a_k`, "eq1", true);
+  render(String.raw`f(x) = \left( 1 + \cfrac{1}{1 + \frac{1}{x}} \right)`, "eq2", true);
+  render(String.raw`a + n = k`, "eq3", true);
 </script>
 </body>
 </html>

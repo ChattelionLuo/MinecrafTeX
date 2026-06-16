@@ -42,3 +42,33 @@ def test_roundtrip(tmp_path, font):
     font.save(str(out))
     again = TTFont(str(out))
     assert again["MATH"].table.MathConstants.FractionRuleThickness.Value == 100
+
+
+def test_math_script_present(font):
+    """A `math` script tag in GSUB stops unicode-math's Latin Modern fallback."""
+    scripts = font["GSUB"].table.ScriptList.ScriptRecord
+    assert any(s.ScriptTag == "math" for s in scripts)
+
+
+def test_math_variants_stretchy(font):
+    """Stretchy delimiters/operators must expose vertical size variants."""
+    mv = font["MATH"].table.MathVariants
+    assert mv is not None
+    assert mv.VertGlyphCount > 0
+    covered = set(mv.VertGlyphCoverage.glyphs)
+    order = font.getGlyphOrder()
+    for name in ("left_parenthesis", "right_parenthesis", "left_curly_brace",
+                 "radical", "integral", "n_ary_summation"):
+        assert name in order, f"missing glyph {name}"
+        assert name in covered, f"{name} has no vertical variants"
+    # Each construction lists at least the base plus one larger variant.
+    for c in mv.VertGlyphConstruction:
+        assert c.VariantCount >= 1
+
+
+def test_integral_italic_correction(font):
+    """Integral needs italic correction so display limits clear the glyph."""
+    info = font["MATH"].table.MathGlyphInfo
+    assert info is not None and info.MathItalicsCorrectionInfo is not None
+    ic = info.MathItalicsCorrectionInfo
+    assert "integral" in set(ic.Coverage.glyphs)
