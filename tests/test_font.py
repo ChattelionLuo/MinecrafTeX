@@ -24,16 +24,39 @@ def test_has_math_table(font):
 
 def test_math_constants_pixel_snapped(font):
     mc = font["MATH"].table.MathConstants
-    # Every MathValueRecord must be a whole number of pixels (100 units).
+    # Most MathValueRecords are whole pixels (100 units).
     assert mc.FractionRuleThickness.Value == 100
-    assert mc.AxisHeight.Value % 100 == 0
     assert mc.RadicalRuleThickness.Value == 100
+    # The math axis is snapped to the HALF-pixel grid (350 = 3.5 px): Monocraft's
+    # +, -, = operators centre on y=3.5 px, so the axis must too, otherwise the
+    # engine half-pixel-shifts every stretchy delimiter. Allow any 0.5 px step.
+    assert mc.AxisHeight.Value % 50 == 0
 
 
 def test_core_glyphs_present(font):
     cmap = font.getBestCmap()
     for cp in (0x0030, 0x0031, 0x0078, 0x006E, 0x003D,
                0x222B, 0x2211, 0x221A, 0x2212):
+        assert cp in cmap, f"missing U+{cp:04X}"
+
+
+def test_added_relation_glyphs_present(font):
+    """Common relations/operators Monocraft lacks are now drawn as pixels."""
+    cmap = font.getBestCmap()
+    for cp in (0x2264, 0x2265, 0x2248, 0x223C, 0x2208, 0x220B,
+               0x2207, 0x22C5, 0x222A, 0x2205):
+        assert cp in cmap, f"missing U+{cp:04X}"
+
+
+def test_math_alphanumeric_aliased(font):
+    """Math italic/bold letters (and italic phi) must map to pixel glyphs so
+    unicode-math does not fall back to Latin Modern serif."""
+    cmap = font.getBestCmap()
+    for cp in (0x1D465,  # math italic x
+               0x1D400,  # math bold A
+               0x1D719,  # math italic phi symbol -> phi
+               0x1D6FC,  # math italic alpha
+               0x1D7CE): # math bold digit 0
         assert cp in cmap, f"missing U+{cp:04X}"
 
 

@@ -27,12 +27,12 @@ def _rows_from_pixels(pixels: list[list[int]]) -> list[str]:
     return ["".join("#" if cell else "." for cell in row) for row in pixels]
 
 
-def load_base_glyphs(max_codepoint: int = 0x2BFF) -> list[Glyph]:
-    """Return Monocraft glyphs with a real codepoint up to `max_codepoint`.
+def load_base_glyphs(max_codepoint: int = 0x10FFFF) -> list[Glyph]:
+    """Return every Monocraft glyph with a real codepoint up to `max_codepoint`.
 
-    The default ceiling keeps Latin, Greek, Cyrillic, general punctuation,
-    arrows and mathematical operators while dropping the large CJK/PUA tail we
-    do not need, keeping the font small and the build fast.
+    By default we load the whole set (Latin, Greek, Cyrillic, punctuation,
+    arrows, mathematical operators, ...) so prose and math symbols all exist as
+    authentic pixels.
     """
     with open(_DATA, encoding="utf-8") as fh:
         entries = json.load(fh)

@@ -39,7 +39,10 @@ CAP_HEIGHT = CAP_PX * PIXEL
 X_HEIGHT = XHEIGHT_PX * PIXEL
 DESCENT = DESCENT_PX * PIXEL          # negative
 ASCENT = ASCENT_PX * PIXEL
-AXIS_HEIGHT = AXIS_PX * PIXEL
+# Math axis = 3.5 px. Monocraft centres binary operators (+ - =) on y=3.5px, so
+# the fraction bar / delimiter centre must match or the engine shifts delimiters
+# by half a pixel (which destroys pixel crispness).
+AXIS_HEIGHT = 350
 
 
 @dataclass
@@ -123,6 +126,10 @@ class FontSpec:
     style: str = "Regular"
     version: str = "0.1.0"
     glyphs: list[Glyph] = field(default_factory=list)
+    # Extra cmap entries: codepoint -> existing glyph name (aliases, no new
+    # outline). Used to point the Mathematical Alphanumeric Symbols at the
+    # plain pixel letters so math italic/bold/... letters render as pixels.
+    extra_cmap: dict[int, str] = field(default_factory=dict)
 
 
 def build_font(spec: FontSpec) -> TTFont:
@@ -133,8 +140,12 @@ def build_font(spec: FontSpec) -> TTFont:
     fb = FontBuilder(UPM, isTTF=True)
     fb.setupGlyphOrder(order)
 
-    # cmap: codepoint -> glyph name
+    # cmap: codepoint -> glyph name (+ alias entries reusing existing glyphs)
     cmap = {g.codepoint: g.name for g in spec.glyphs if g.codepoint is not None}
+    names = set(order)
+    for cp, name in spec.extra_cmap.items():
+        if cp not in cmap and name in names:
+            cmap[cp] = name
     fb.setupCharacterMap(cmap)
 
     # outlines

@@ -24,8 +24,11 @@ from dataclasses import dataclass
 from pixelfont import Glyph, PIXEL, AXIS_PX
 
 # Variant heights (in pixels) generated for each stretchy delimiter, on top of
-# the ~7 px base glyph. Odd heights keep the centre on the 3.5 px axis.
-_VARIANT_HEIGHTS = [9, 11, 13]
+# the ~7 px base glyph. ODD heights stay centred on the 3.5 px math axis, so the
+# engine never has to half-pixel-shift them. We pre-draw a generous range so that
+# realistic content (fractions, nested fractions) always hits a crisp solid
+# variant and only pathologically tall content falls back to glyph assembly.
+_VARIANT_HEIGHTS = [9, 11, 13, 15, 17, 19, 21, 23, 25]
 
 
 @dataclass
@@ -82,7 +85,10 @@ def _add_vertical_delimiter(key: str, codepoint: int, base_name: str,
         _g(name, rows, _centred_bottom(len(rows)))
         variants.append((name, len(rows) * PIXEL))
 
-    # Assembly parts (drawn at baseline; engine stacks + centres them).
+    # Assembly parts (drawn at baseline; engine stacks + centres them). Each part
+    # advertises a connector region equal to its full advance and the extender is
+    # 1 px tall, so the engine can overlap neighbours on matching pixel columns to
+    # hit any target height exactly -- no gaps between the caps and the extender.
     bot_name = f"{key}.bot"
     ext_name = f"{key}.ext"
     top_name = f"{key}.top"
@@ -90,21 +96,23 @@ def _add_vertical_delimiter(key: str, codepoint: int, base_name: str,
     _g(ext_name, [ext], 0)
     _g(top_name, top, 0)
 
+    nb, nt = len(bottom) * PIXEL, len(top) * PIXEL
     if mid is None:
         parts = [
-            (bot_name, 0, 0, len(bottom) * PIXEL, False),
-            (ext_name, 0, 0, PIXEL, True),
-            (top_name, 0, 0, len(top) * PIXEL, False),
+            (bot_name, 0, nb, nb, False),
+            (ext_name, PIXEL, PIXEL, PIXEL, True),
+            (top_name, nt, 0, nt, False),
         ]
     else:
         mid_name = f"{key}.mid"
         _g(mid_name, mid, 0)
+        nm = len(mid) * PIXEL
         parts = [
-            (bot_name, 0, 0, len(bottom) * PIXEL, False),
-            (ext_name, 0, 0, PIXEL, True),
-            (mid_name, 0, 0, len(mid) * PIXEL, False),
-            (ext_name, 0, 0, PIXEL, True),
-            (top_name, 0, 0, len(top) * PIXEL, False),
+            (bot_name, 0, nb, nb, False),
+            (ext_name, PIXEL, PIXEL, PIXEL, True),
+            (mid_name, nm, nm, nm, False),
+            (ext_name, PIXEL, PIXEL, PIXEL, True),
+            (top_name, nt, 0, nt, False),
         ]
 
     _constructions.append(Construction(codepoint, base_name,
@@ -115,13 +123,13 @@ def _add_vertical_delimiter(key: str, codepoint: int, base_name: str,
 
 _add_vertical_delimiter(
     "parenleft", 0x0028, "left_parenthesis", 7,
-    top=["...#.", "..#..", ".#..."], ext=".#...",
-    bottom=[".#...", "..#..", "...#."])
+    top=["..##.", ".##..", ".#..."], ext=".#...",
+    bottom=[".#...", ".##..", "..##."])
 
 _add_vertical_delimiter(
     "parenright", 0x0029, "right_parenthesis", 7,
-    top=[".#...", "..#..", "...#."], ext="...#.",
-    bottom=["...#.", "..#..", ".#..."])
+    top=[".##..", "..##.", "...#."], ext="...#.",
+    bottom=["...#.", "..##.", ".##.."])
 
 _add_vertical_delimiter(
     "bracketleft", 0x005B, "left_square_bracket", 7,
@@ -135,13 +143,13 @@ _add_vertical_delimiter(
 
 _add_vertical_delimiter(
     "braceleft", 0x007B, "left_curly_brace", 7,
-    top=["...#.", "..#..", "..#.."], ext="..#..",
-    mid=["##..."], bottom=["..#..", "..#..", "...#."])
+    top=["..##.", "..#..", "..#.."], ext="..#..",
+    mid=[".#...", "#....", ".#..."], bottom=["..#..", "..#..", "..##."])
 
 _add_vertical_delimiter(
     "braceright", 0x007D, "right_curly_brace", 7,
-    top=[".#...", "..#..", "..#.."], ext="..#..",
-    mid=["...##"], bottom=["..#..", "..#..", ".#..."])
+    top=[".##..", "..#..", "..#.."], ext="..#..",
+    mid=["...#.", "....#", "...#."], bottom=["..#..", "..#..", ".##.."])
 
 _add_vertical_delimiter(
     "bar", 0x007C, "vertical_line", 7,
@@ -174,9 +182,9 @@ _g("radical.ext", [_RAD_VBAR], 0, advance_px=5)
 _g("radical.top", [_RAD_VBAR], 0, advance_px=5)
 _constructions.append(Construction(
     0x221A, "radical", 7 * PIXEL, _rad_variants,
-    [("radical.bot", 0, 0, len(_RAD_CHECK) * PIXEL, False),
-     ("radical.ext", 0, 0, PIXEL, True),
-     ("radical.top", 0, 0, PIXEL, False)]))
+    [("radical.bot", 0, len(_RAD_CHECK) * PIXEL, len(_RAD_CHECK) * PIXEL, False),
+     ("radical.ext", PIXEL, PIXEL, PIXEL, True),
+     ("radical.top", PIXEL, 0, PIXEL, False)]))
 
 
 # --- Display-size big operators ---------------------------------------------
@@ -242,6 +250,112 @@ _g("product.display", [
 _constructions.append(Construction(
     0x220F, "product", 7 * PIXEL,
     [("product", 7 * PIXEL), ("product.display", 9 * PIXEL)], []))
+
+
+# --- Plain math symbols Monocraft is missing -------------------------------
+# Common relations/operators absent from the base set. Drawn 7-row on the shared
+# 5-wide grid (bottom_px = 0, like Monocraft operators) so they sit naturally in
+# a line of pixel math.
+
+_g("less_equal", [
+    "...#.",
+    "..#..",
+    ".#...",
+    "..#..",
+    "...#.",
+    ".....",
+    "#####",
+], bottom_px=0, codepoint=0x2264)
+
+_g("greater_equal", [
+    ".#...",
+    "..#..",
+    "...#.",
+    "..#..",
+    ".#...",
+    ".....",
+    "#####",
+], bottom_px=0, codepoint=0x2265)
+
+_g("approx_equal", [
+    ".....",
+    ".#.##",
+    "##.#.",
+    ".....",
+    ".#.##",
+    "##.#.",
+    ".....",
+], bottom_px=0, codepoint=0x2248)
+
+_g("tilde_operator", [
+    ".....",
+    ".....",
+    ".#..#",
+    "#.#.#",
+    "#..#.",
+    ".....",
+    ".....",
+], bottom_px=0, codepoint=0x223C)
+
+_g("element_of", [
+    "..###",
+    ".#...",
+    "#....",
+    "####.",
+    "#....",
+    ".#...",
+    "..###",
+], bottom_px=0, codepoint=0x2208)
+
+_g("contains_member", [
+    "###..",
+    "...#.",
+    "....#",
+    ".####",
+    "....#",
+    "...#.",
+    "###..",
+], bottom_px=0, codepoint=0x220B)
+
+_g("nabla", [
+    "#####",
+    "#...#",
+    "#...#",
+    ".#.#.",
+    ".#.#.",
+    "..#..",
+    ".....",
+], bottom_px=0, codepoint=0x2207)
+
+_g("dot_operator", [
+    ".....",
+    ".....",
+    ".....",
+    "..#..",
+    ".....",
+    ".....",
+    ".....",
+], bottom_px=0, advance_px=4, codepoint=0x22C5)
+
+_g("union", [
+    "#...#",
+    "#...#",
+    "#...#",
+    "#...#",
+    "#...#",
+    "#...#",
+    ".###.",
+], bottom_px=0, codepoint=0x222A)
+
+_g("empty_set", [
+    "....#",
+    ".###.",
+    "#..##",
+    "#.#.#",
+    "##..#",
+    ".###.",
+    "#....",
+], bottom_px=0, codepoint=0x2205)
 
 
 def math_extra_glyphs() -> list[Glyph]:

@@ -47,14 +47,18 @@
   <p>Source: <code>f(x) = \left( 1 + \cfrac{1}{1 + \frac{1}{x}} \right)</code></p>
 
   <div class="eq" id="eq3"></div>
-  <p>Source: <code>a + n = k</code></p>
+  <p>Source: <code>\sum_{k=1}^{\infty} \frac{1}{k^{2}} = \frac{\pi^{2}}{6} \qquad \prod_{i=1}^{n} i = n!</code></p>
+
+  <div class="eq" id="eq4"></div>
+  <p>Source: <code>A = \begin{pmatrix} a &amp; b \\ c &amp; d \end{pmatrix}, \quad \alpha + \beta \geq \gamma, \quad x \in [0, 2\pi)</code></p>
 
 <script>
   const render = (tex, id, display) =>
     temml.render(tex, document.getElementById(id), { displayMode: display });
   render(String.raw`\left( \frac{\sqrt{x}}{n} \right) = \int_{0}^{1} \sqrt{x}\,dx = \sum_{k=1}^{n} a_k`, "eq1", true);
   render(String.raw`f(x) = \left( 1 + \cfrac{1}{1 + \frac{1}{x}} \right)`, "eq2", true);
-  render(String.raw`a + n = k`, "eq3", true);
+  render(String.raw`\sum_{k=1}^{\infty} \frac{1}{k^{2}} = \frac{\pi^{2}}{6} \qquad \prod_{i=1}^{n} i = n!`, "eq3", true);
+  render(String.raw`A = \begin{pmatrix} a & b \\ c & d \end{pmatrix}, \quad \alpha + \beta \geq \gamma, \quad x \in [0, 2\pi)`, "eq4", true);
 </script>
 </body>
 </html>

@@ -17,10 +17,22 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), "src"))
 from pixelfont import FontSpec, build_font, save  # noqa: E402
 from monocraft_loader import load_base_glyphs  # noqa: E402
 from math_glyphs import math_extra_glyphs  # noqa: E402
+from math_alphanum import alphanumeric_aliases  # noqa: E402
 from math_table import add_math_table  # noqa: E402
 from gsub import add_math_script  # noqa: E402
 
 DIST = os.path.join(os.path.dirname(__file__), "dist")
+
+# Long arrows (and similar) that unicode-math may request; reuse the base
+# short-arrow pixel glyph rather than duplicating outlines.
+_SYMBOL_ALIASES = {
+    0x27F9: 0x21D2,  # long rightwards double arrow -> rightwards double arrow
+    0x27F8: 0x21D0,  # long leftwards double arrow  -> leftwards double arrow
+    0x27FA: 0x21D4,  # long left-right double arrow -> left-right double arrow
+    0x27F6: 0x2192,  # long rightwards arrow        -> rightwards arrow
+    0x27F5: 0x2190,  # long leftwards arrow         -> leftwards arrow
+    0x27F7: 0x2194,  # long left-right arrow        -> left-right arrow
+}
 
 
 def collect_glyphs():
@@ -38,11 +50,20 @@ def collect_glyphs():
 def main() -> None:
     os.makedirs(DIST, exist_ok=True)
     glyphs = collect_glyphs()
-    spec = FontSpec(glyphs=glyphs)
+    # Alias the Mathematical Alphanumeric Symbols (math italic/bold/... letters
+    # and digits) onto the plain pixel glyphs so they render as pixels.
+    name_by_cp = {g.codepoint: g.name for g in glyphs if g.codepoint is not None}
+    aliases = alphanumeric_aliases(name_by_cp)
+    # A few long/extra symbols unicode-math requests that reuse a base glyph.
+    for cp, base_cp in _SYMBOL_ALIASES.items():
+        base = name_by_cp.get(base_cp)
+        if base is not None and cp not in name_by_cp:
+            aliases.setdefault(cp, base)
+    spec = FontSpec(glyphs=glyphs, extra_cmap=aliases)
     font = build_font(spec)
     add_math_table(font)
     add_math_script(font, anchor_glyph="space")
-    print(f"glyphs: {len(glyphs)}")
+    print(f"glyphs: {len(glyphs)}  alphanumeric aliases: {len(aliases)}")
 
     ttf_path = os.path.join(DIST, "MinecrafTeX-Math.ttf")
     save(font, ttf_path)

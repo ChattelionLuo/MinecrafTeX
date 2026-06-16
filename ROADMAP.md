@@ -11,13 +11,20 @@
 ### Phase 2 — Math glyph coverage ✅ (broad)
 - Full Unicode coverage loaded from Monocraft: Latin + Greek, digits,
   binary/relational operators, set/logic, calculus, big operators, delimiters, dots.
-- Hand-built additions Monocraft lacks: radical `√` and n-ary product `∏`.
+- Mathematical Alphanumeric Symbols (U+1D400–U+1D7FF): all 1000+ bold/italic/
+  script/fraktur/double-struck/sans/mono letter & digit planes aliased onto the
+  base pixel glyphs, so math letters render as pixels (no Latin Modern fallback).
+  Greek "symbol variants" (italic phi etc.) fall back to the plain Greek letter.
+- Hand-built additions Monocraft lacks: radical `√`, n-ary product `∏`, and the
+  common relations/operators `≤ ≥ ≈ ∼ ∈ ∋ ∇ ⋅ ∪ ∅`; long arrows alias short ones.
 - Display-size big operators (`∫ ∑ ∏`) and stretchy delimiter pieces.
 
 ### Phase 3 — OpenType MATH table ✅ (core feature)
-- ✅ `MathConstants` (all values pixel-snapped).
+- ✅ `MathConstants` (pixel-snapped; math axis on the half-pixel grid at 3.5 px to
+  match Monocraft's `+ − =` operator centring, so stretchy delimiters stay crisp).
 - ✅ `MathVariants` + glyph **assembly** for stretchy `( ) [ ] { } | √ ∫ ∑ ∏`
-  (size variants + top/extender/bottom pixel pieces; 1 px growth steps stay crisp).
+  (size variants up to 25 px + top/extender/bottom pixel pieces; 1 px growth steps
+  stay crisp). Curved delimiters drawn 2 px edge-connected to read as solid pixels.
 - ✅ `MathGlyphInfo`: italic corrections so integral limits clear the glyph.
 - ⬜ Discrete hand-designed script / scriptscript sizes (further crispness).
 
@@ -25,7 +32,9 @@
 - ✅ `latex/minecraftex.sty` wrapper over `fontspec` + `unicode-math`;
   compiles with lualatex, pixel font used for text and math.
 - ✅ Accepted as the *primary* math font: a `math` script tag in GSUB stops the
-  Latin Modern fallback; `example.tex` renders fully in pixels with no missing chars.
+  Latin Modern fallback; `latex/example.tex` is a two-page math article (fractions,
+  roots, calculus, series/products, matrices, cases, Greek, relations) that renders
+  fully in pixels with adaptive sizing and **no missing characters**.
 - ⬜ Package options polish, CTAN packaging.
 
 ### Phase 5 — Web library 🚧
