@@ -198,7 +198,10 @@ _constructions.append(Construction(
 # Base integral/sum come from Monocraft; we add a larger DISPLAY variant so they
 # grow in display style (engine compares advance to DisplayOperatorMinHeight).
 
-# Display integral: a taller S (12 px), centred low like the 8 px base.
+# Display integral: a tall, graceful S (15 px) so it visually spans a typical
+# display integrand (a fraction/radical), matching Computer Modern's display
+# integral. Big operators do NOT stretch to the integrand (that is not how TeX
+# works); they have a single fixed display size, which is what this variant is.
 _g("integral.display", [
     "...##",
     "..#.#",
@@ -210,12 +213,15 @@ _g("integral.display", [
     "..#..",
     "..#..",
     "..#..",
+    "..#..",
+    "..#..",
+    "..#..",
     "#.#..",
     "##...",
-], bottom_px=-2, codepoint=None)
+], bottom_px=-3, codepoint=None)
 _constructions.append(Construction(
     0x222B, "integral", 8 * PIXEL,
-    [("integral", 8 * PIXEL), ("integral.display", 12 * PIXEL)], []))
+    [("integral", 8 * PIXEL), ("integral.display", 15 * PIXEL)], []))
 
 # Display summation (9 px tall sigma; vertex at the left-centre like the base).
 _g("summation.display", [
