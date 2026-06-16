@@ -11,7 +11,7 @@ from fontTools.ttLib import TTFont, newTable
 from fontTools.ttLib.tables import otTables as ot
 
 from pixelfont import PIXEL, AXIS_HEIGHT, CAP_HEIGHT
-from math_glyphs import MATH_CONSTRUCTIONS, ITALIC_CORRECTIONS
+from math_glyphs import MATH_CONSTRUCTIONS, ITALIC_CORRECTIONS, MATH_KERNS
 
 
 def _mv(value: int) -> ot.MathValueRecord:
@@ -160,11 +160,46 @@ def _make_variants(font: TTFont) -> ot.MathVariants:
     return mv
 
 
+def _make_kern(value: int) -> ot.MathKern:
+    """A flat math kern (no height steps): one correction applied at all heights."""
+    k = ot.MathKern()
+    k.HeightCount = 0
+    k.CorrectionHeight = []
+    k.KernValue = [_mv(value)]
+    return k
+
+
+def _make_kern_info(font: TTFont) -> ot.MathKernInfo | None:
+    """Per-corner cut-in kerns so big-operator limits clear the glyph hooks."""
+    gid = {name: i for i, name in enumerate(font.getGlyphOrder())}
+    items = [(gid[n], n, c) for n, c in MATH_KERNS.items() if n in gid]
+    if not items:
+        return None
+    items.sort(key=lambda t: t[0])  # coverage in GID order
+
+    ki = ot.MathKernInfo()
+    cov = ot.Coverage()
+    cov.glyphs = [n for _, n, _ in items]
+    ki.MathKernCoverage = cov
+    ki.MathKernCount = len(items)
+    records = []
+    for _, _, corners in items:
+        rec = ot.MathKernInfoRecord()
+        rec.TopRightMathKern = _make_kern(corners["tr"]) if "tr" in corners else None
+        rec.TopLeftMathKern = _make_kern(corners["tl"]) if "tl" in corners else None
+        rec.BottomRightMathKern = _make_kern(corners["br"]) if "br" in corners else None
+        rec.BottomLeftMathKern = _make_kern(corners["bl"]) if "bl" in corners else None
+        records.append(rec)
+    ki.MathKernInfoRecords = records
+    return ki
+
+
 def _make_glyph_info(font: TTFont) -> ot.MathGlyphInfo | None:
     """Italic corrections so operator limits/scripts clear the glyph body."""
     gid = {name: i for i, name in enumerate(font.getGlyphOrder())}
     items = [(gid[n], n, v) for n, v in ITALIC_CORRECTIONS.items() if n in gid]
-    if not items:
+    kern_info = _make_kern_info(font)
+    if not items and kern_info is None:
         return None
     items.sort(key=lambda t: t[0])  # coverage in GID order
 
@@ -179,7 +214,7 @@ def _make_glyph_info(font: TTFont) -> ot.MathGlyphInfo | None:
     info.MathItalicsCorrectionInfo = ic
     info.MathTopAccentAttachment = None
     info.ExtendedShapeCoverage = None
-    info.MathKernInfo = None
+    info.MathKernInfo = kern_info
     return info
 
 

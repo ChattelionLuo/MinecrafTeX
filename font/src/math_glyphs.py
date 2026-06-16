@@ -157,29 +157,36 @@ _add_vertical_delimiter(
 
 
 # --- Radical (Monocraft has no U+221A): base + upward-growing variants -------
-
-_RAD_CHECK = ["#...#", ".#.#.", "..#.."]   # the V, bottom 3 rows
-_RAD_VBAR = "....#"                          # rising right stroke
+#
+# The surd is 6 px wide. The rising stroke is in column 4; column 5 carries a
+# 1 px "tongue" ONLY on the very top row. The engine draws the vinculum starting
+# at the glyph's advance (6 px) and places the radicand there too -- so the tongue
+# bridges the stroke to the vinculum (overbar stays connected) while leaving a
+# clean 1 px gap (column 5) between the stroke and the radicand body, so digits
+# and letters no longer touch the surd.
+_RAD_CHECK = ["#...#.", ".#.#..", "..#..."]   # the V, bottom 3 rows (width 6)
+_RAD_VBAR = "....#."                            # rising right stroke (col 4)
+_RAD_TOP = "....##"                             # stroke + tongue out to advance
 
 
 def _radical_rows(height_px: int) -> list[str]:
-    return [_RAD_VBAR] * (height_px - len(_RAD_CHECK)) + _RAD_CHECK
+    n_vbar = height_px - len(_RAD_CHECK) - 1
+    return [_RAD_TOP] + [_RAD_VBAR] * n_vbar + _RAD_CHECK
 
 
 # Base radical (7 px), sits on the baseline (grows upward, not axis-centred).
-# Advance = 5 px so the engine-drawn vinculum starts exactly at the rising
-# stroke (column 4); a 6 px advance would leave a 1 px gap in the overbar.
-_g("radical", _radical_rows(7), 0, advance_px=5, codepoint=0x221A)
+_g("radical", _radical_rows(7), 0, advance_px=6, codepoint=0x221A)
 _rad_variants = [("radical", 7 * PIXEL)]
 for h in _VARIANT_HEIGHTS:
     nm = f"radical.v{h}"
-    _g(nm, _radical_rows(h), 0, advance_px=5)
+    _g(nm, _radical_rows(h), 0, advance_px=6)
     _rad_variants.append((nm, h * PIXEL))
 
-# Radical assembly: check at the bottom, repeatable vertical stroke, top cap.
-_g("radical.bot", _RAD_CHECK, 0, advance_px=5)
-_g("radical.ext", [_RAD_VBAR], 0, advance_px=5)
-_g("radical.top", [_RAD_VBAR], 0, advance_px=5)
+# Radical assembly: check at the bottom, repeatable vertical stroke, top cap with
+# the connecting tongue.
+_g("radical.bot", _RAD_CHECK, 0, advance_px=6)
+_g("radical.ext", [_RAD_VBAR], 0, advance_px=6)
+_g("radical.top", [_RAD_TOP], 0, advance_px=6)
 _constructions.append(Construction(
     0x221A, "radical", 7 * PIXEL, _rad_variants,
     [("radical.bot", 0, len(_RAD_CHECK) * PIXEL, len(_RAD_CHECK) * PIXEL, False),
@@ -370,4 +377,14 @@ MATH_CONSTRUCTIONS: list[Construction] = _constructions
 ITALIC_CORRECTIONS: dict[str, int] = {
     "integral": 2 * PIXEL,
     "integral.display": 3 * PIXEL,
+}
+
+# Math cut-in kerns (units) per glyph corner, so a big operator's limits tuck
+# past its hooks instead of colliding with them -- the same mechanism real math
+# fonts use for integral limits. Corners: 'tr','tl','br','bl'. Any corner left
+# unset falls back to the italic correction. The integral's lower limit attaches
+# at the bottom-right; a positive kern pushes it clear of the left-leaning hook.
+MATH_KERNS: dict[str, dict[str, int]] = {
+    "integral": {"br": 4 * PIXEL},
+    "integral.display": {"br": 6 * PIXEL},
 }

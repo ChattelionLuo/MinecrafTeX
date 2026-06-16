@@ -1,0 +1,123 @@
+% MinecrafTeX showcase: a short, PhD-level proof of the Central Limit Theorem,
+% rendered entirely in Minecraft pixels.  Compile with:  lualatex clt.tex
+\documentclass[11pt]{article}
+\usepackage[a4paper,margin=2.3cm]{geometry}
+\usepackage{amsmath}
+\usepackage[scale=1.5]{minecraftex}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt}
+
+% Convergence in distribution: "d" over a right arrow (the arrow comes from the
+% pixel font's U+2192 glyph, which \longrightarrow aliases to).
+\newcommand{\dto}{\mathrel{\overset{\mathrm{d}}{\longrightarrow}}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\N}{\mathbb{N}}
+% End-of-proof box drawn with a TeX rule so it needs no extra font glyph.
+\newcommand{\proofend}{\rule[0.05ex]{1.1ex}{1.1ex}}
+
+\newcommand{\heading}[1]{\bigskip{\Large #1}\par\nobreak\smallskip}
+
+\begin{document}
+
+\begin{center}
+{\huge The Central Limit Theorem}\\[4pt]
+{\large A characteristic-function proof, in Minecraft pixels}
+\end{center}
+
+\heading{1.\quad Statement}
+
+Let $X_1, X_2, \dots$ be independent, identically distributed random variables
+on a probability space, with finite mean and variance
+\[
+  \mu = \E[X_1], \qquad \sigma^2 = \E\!\left[(X_1 - \mu)^2\right] \in (0, \infty).
+\]
+Write the partial sum $S_n = \sum_{k=1}^{n} X_k$ and its standardisation
+\[
+  Z_n = \frac{S_n - n\mu}{\sigma \sqrt{n}}.
+\]
+
+\textbf{Theorem (CLT).}\; As $n \to \infty$,
+\[
+  Z_n \;\dto\; Z, \qquad Z \sim \mathcal{N}(0, 1),
+\]
+that is, for every $z \in \R$,
+\[
+  \Pr(Z_n \leq z) \;\longrightarrow\;
+  \Phi(z) = \int_{-\infty}^{z} \frac{1}{\sqrt{2\pi}}\, e^{-x^2/2}\, dx.
+\]
+
+\heading{2.\quad The characteristic function}
+
+For a random variable $X$ the characteristic function is
+\[
+  \varphi_X(t) = \E\!\left[ e^{itX} \right]
+              = \int_{-\infty}^{\infty} e^{itx}\, dF_X(x), \qquad t \in \R.
+\]
+Two facts drive the proof. First, independence factorises it: if $X$ and $Y$ are
+independent then $\varphi_{X+Y} = \varphi_X \cdot \varphi_Y$. Second, two moments
+give a quadratic expansion at the origin,
+\[
+  \varphi_X(t) = 1 + it\,\E[X] - \frac{t^2}{2}\,\E[X^2] + o(t^2)
+  \qquad (t \to 0).
+\]
+
+\newpage
+
+\heading{3.\quad Proof}
+
+By replacing $X_k$ with $(X_k - \mu)/\sigma$ we may assume $\mu = 0$ and
+$\sigma^2 = 1$, so that $\E[X_1] = 0$, $\E[X_1^2] = 1$, and
+\[
+  Z_n = \frac{1}{\sqrt{n}} \sum_{k=1}^{n} X_k.
+\]
+Fix $t \in \R$. Using independence and the identical distribution of the $X_k$,
+\[
+  \varphi_{Z_n}(t)
+    = \E\!\left[ \exp\!\left( \frac{it}{\sqrt{n}} \sum_{k=1}^{n} X_k \right) \right]
+    = \prod_{k=1}^{n} \varphi_{X_1}\!\left( \frac{t}{\sqrt{n}} \right)
+    = \left[ \varphi_{X_1}\!\left( \frac{t}{\sqrt{n}} \right) \right]^{n}.
+\]
+Since $\E[X_1] = 0$ and $\E[X_1^2] = 1$, the expansion of Section~2 at the point
+$t/\sqrt{n} \to 0$ gives
+\[
+  \varphi_{X_1}\!\left( \frac{t}{\sqrt{n}} \right)
+    = 1 - \frac{t^2}{2n} + o\!\left( \frac{1}{n} \right).
+\]
+Therefore, taking logarithms and using $\log(1 + u) = u + o(u)$,
+\[
+  \log \varphi_{Z_n}(t)
+    = n \log\!\left( 1 - \frac{t^2}{2n} + o\!\left(\tfrac{1}{n}\right) \right)
+    = n \left( -\frac{t^2}{2n} + o\!\left(\tfrac{1}{n}\right) \right)
+    \;\longrightarrow\; -\frac{t^2}{2}.
+\]
+Equivalently, with the classical limit $\bigl(1 + \tfrac{a}{n}\bigr)^{n} \to e^{a}$,
+\[
+  \varphi_{Z_n}(t) \;\longrightarrow\; e^{-t^2/2}
+  \qquad \text{for every } t \in \R.
+\]
+The right-hand side is exactly the characteristic function of the standard normal
+law, since
+\[
+  \int_{-\infty}^{\infty} e^{itx}\, \frac{1}{\sqrt{2\pi}}\, e^{-x^2/2}\, dx
+    = e^{-t^2/2}.
+\]
+By Levy's continuity theorem, pointwise convergence of characteristic functions
+to a function continuous at $0$ implies convergence in distribution. Hence
+\[
+  Z_n \;\dto\; Z \sim \mathcal{N}(0, 1). \qquad \proofend
+\]
+
+\heading{4.\quad Remark}
+
+The same argument, expanded one order further, exhibits the speed of convergence:
+if $\E\,|X_1|^3 < \infty$ then for each fixed $t$,
+\[
+  \left| \varphi_{Z_n}(t) - e^{-t^2/2} \right|
+    \;\leq\; \frac{C\,|t|^3}{\sqrt{n}},
+\]
+which is the analytic heart of the Berry--Esseen bound on
+$\sup_{z \in \R} \bigl| \Pr(Z_n \leq z) - \Phi(z) \bigr|$.
+
+\end{document}

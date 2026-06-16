@@ -95,3 +95,18 @@ def test_integral_italic_correction(font):
     assert info is not None and info.MathItalicsCorrectionInfo is not None
     ic = info.MathItalicsCorrectionInfo
     assert "integral" in set(ic.Coverage.glyphs)
+
+
+def test_integral_subscript_kern(font):
+    """Integral carries a bottom-right cut-in kern so its lower limit tucks
+    clear of the hook (the MathKernInfo path, not just italic correction)."""
+    info = font["MATH"].table.MathGlyphInfo
+    assert info is not None and info.MathKernInfo is not None
+    ki = info.MathKernInfo
+    covered = set(ki.MathKernCoverage.glyphs)
+    assert "integral" in covered
+    idx = ki.MathKernCoverage.glyphs.index("integral")
+    rec = ki.MathKernInfoRecords[idx]
+    assert rec.BottomRightMathKern is not None
+    assert rec.BottomRightMathKern.KernValue[0].Value > 0
+

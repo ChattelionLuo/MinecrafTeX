@@ -23,6 +23,23 @@ from gsub import add_math_script  # noqa: E402
 
 DIST = os.path.join(os.path.dirname(__file__), "dist")
 
+# Delimiters whose base pixel art Monocraft draws from the baseline up to cap
+# height (0..7 px). Lowering them one pixel (to -1..6 px) centres them on the
+# x-height content they usually wrap, so plain `(x)`, `[x]`, `{x}`, `|x|` look
+# balanced instead of the glyph sitting high above the letter. Big delimiters use
+# \left\right, which the engine re-centres on the math axis, so they are
+# unaffected.
+_DELIMITER_DROP_CODEPOINTS = {
+    0x0028, 0x0029,  # ( )
+    0x005B, 0x005D,  # [ ]
+    0x007B, 0x007D,  # { }
+    0x007C,          # |
+    0x2016,          # ‖
+    0x2308, 0x2309,  # ⌈ ⌉
+    0x230A, 0x230B,  # ⌊ ⌋
+    0x27E8, 0x27E9,  # ⟨ ⟩
+}
+
 # Long arrows (and similar) that unicode-math may request; reuse the base
 # short-arrow pixel glyph rather than duplicating outlines.
 _SYMBOL_ALIASES = {
@@ -37,6 +54,10 @@ _SYMBOL_ALIASES = {
 
 def collect_glyphs():
     base = load_base_glyphs()
+    # Drop the common delimiters 1 px so they centre on x-height content.
+    for g in base:
+        if g.codepoint in _DELIMITER_DROP_CODEPOINTS:
+            g.bottom_px -= 1
     taken = {g.codepoint for g in base}
     glyphs = list(base)
     # Add MinecrafTeX math glyphs; for cmap'd ones, don't collide with base.

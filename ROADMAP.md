@@ -25,16 +25,20 @@
 - ✅ `MathVariants` + glyph **assembly** for stretchy `( ) [ ] { } | √ ∫ ∑ ∏`
   (size variants up to 25 px + top/extender/bottom pixel pieces; 1 px growth steps
   stay crisp). Curved delimiters drawn 2 px edge-connected to read as solid pixels.
-- ✅ `MathGlyphInfo`: italic corrections so integral limits clear the glyph.
+- ✅ `MathGlyphInfo`: italic corrections **and per-corner cut-in kerns**
+  (`MathKernInfo`) so integral limits tuck past the hook instead of colliding.
+- ✅ Common small delimiters dropped to the x-height centre so plain `(x)`,
+  `[x]`, `{x}`, `|x|` look balanced; the radical leaves a 1 px gap before its
+  radicand.
 - ⬜ Discrete hand-designed script / scriptscript sizes (further crispness).
 
 ### Phase 4 — LaTeX package ✅ (working)
 - ✅ `latex/minecraftex.sty` wrapper over `fontspec` + `unicode-math`;
   compiles with lualatex, pixel font used for text and math.
 - ✅ Accepted as the *primary* math font: a `math` script tag in GSUB stops the
-  Latin Modern fallback; `latex/example.tex` is a two-page math article (fractions,
-  roots, calculus, series/products, matrices, cases, Greek, relations) that renders
-  fully in pixels with adaptive sizing and **no missing characters**.
+  Latin Modern fallback; `latex/example.tex` (a two-page math article) and
+  `latex/clt.tex` (a Central Limit Theorem proof) render fully in pixels with
+  adaptive sizing and **no missing characters**.
 - ⬜ Package options polish, CTAN packaging.
 
 ### Phase 5 — Web library 🚧

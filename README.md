@@ -31,10 +31,11 @@ an integral, grow braces, and place scripts — so faithful math layout comes
 
 ```
 font/      pixel-font build pipeline (Python + fontTools, no FontForge needed)
-  src/       pixelfont.py, glyphs.py, math_table.py
+  src/       pixelfont.py, monocraft_loader.py, math_glyphs.py,
+             math_alphanum.py, math_table.py, gsub.py
   build_font.py
   dist/      built MinecrafTeX-Math.ttf / .woff2
-latex/     minecraftex.sty + example document
+latex/     minecraftex.sty + example documents (example.tex, clt.tex)
 web/       npm package + browser demo (Temml)
 tests/     validation + rendered samples
 ```
@@ -52,9 +53,15 @@ edge, bar and gap lands on a whole-pixel boundary and stays sharp.
 
 ## Status
 
-This is an early proof-of-concept. The font core (pixel→OpenType + MATH table)
-builds, validates, round-trips and renders. Coverage is currently the small set
-of glyphs needed for a demonstration equation. See [`ROADMAP.md`](ROADMAP.md).
+The font core (pixel→OpenType + MATH table) builds, validates, round-trips and
+renders. Coverage is broad: the full Monocraft glyph set plus the Mathematical
+Alphanumeric Symbols block (so math letters render as pixels), the common
+relations and operators Monocraft lacks, a growing radical, display-size big
+operators, and stretchy delimiters with proper OpenType `MathVariants`/assembly.
+Two worked LaTeX documents render fully in pixels with adaptive sizing:
+[`latex/example.tex`](latex/example.tex) (a two-page math showcase) and
+[`latex/clt.tex`](latex/clt.tex) (a short proof of the Central Limit Theorem).
+See [`ROADMAP.md`](ROADMAP.md).
 
 ## Licensing
 
