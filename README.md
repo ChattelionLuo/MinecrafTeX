@@ -67,8 +67,8 @@ Use `xelatex` instead if that is your preferred Unicode TeX engine. Plain
 
 Worked examples live in [`latex/`](latex/):
 
-* [`latex/example.tex`](latex/example.tex) — a two-page math showcase.
-* [`latex/clt.tex`](latex/clt.tex) — a short, PhD-level proof of the Central Limit Theorem.
+* [`latex/example.tex`](latex/example.tex) — a two-page showcase.
+* [`latex/clt.tex`](latex/clt.tex) — a proof of the Central Limit Theorem.
 
 ## Use it on the web
 
