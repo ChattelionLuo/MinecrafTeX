@@ -7,7 +7,6 @@ in a Minecraft-inspired pixel style.
 [![Font: OFL 1.1](https://img.shields.io/badge/font-OFL%201.1-green.svg)](OFL.txt)
 [![LaTeX](https://img.shields.io/badge/engine-LuaLaTeX%20%7C%20XeLaTeX-orange.svg)](#use-it-in-latex)
 [![Web](https://img.shields.io/badge/web-Temml%20%2B%20MathML-purple.svg)](#use-it-on-the-web)
-[![Visits](https://hits.sh/github.com/ChattelionLuo/MinecrafTeX.svg?style=flat-square&label=visits&color=7dB84a&labelColor=171b24)](https://hits.sh/github.com/ChattelionLuo/MinecrafTeX/)
 
 It is not a fake equation renderer or a screenshot trick. You still write normal
 math syntax such as `\frac`, `\sqrt`, `\int`, `\sum`, scripts, matrices, and
@@ -86,17 +85,6 @@ npm run serve      # then open the demo in your browser
 
 See [`web/demo/index.html`](web/demo/index.html) for a live LaTeX → pixel-MathML demo.
 
-## Build the font yourself
-
-```bash
-pip install fonttools brotli
-python font/build_font.py        # -> font/dist/MinecrafTeX-Math.ttf + .woff2
-python -m pytest tests/test_font.py -q
-python tests/validate.py         # sanity-check + render sample PNGs
-```
-
-The whole grid is pixel-snapped: `UPM = 1000`, `1px = 100 units`, so every
-edge, bar and gap lands on a whole-pixel boundary and stays sharp at any scale.
 
 ## Repository layout
 
@@ -117,15 +105,7 @@ The font core (pixel → OpenType + MATH table) builds, validates, round-trips
 and renders. Two worked LaTeX documents render fully in pixels with adaptive
 sizing. See [`ROADMAP.md`](ROADMAP.md) for what's next.
 
-## Sharing the project
 
-The easiest way to show MinecrafTeX is with examples, not feature lists:
-
-* Pin the two rendered pages above near the top of the repo and attach them to the first GitHub release.
-* Publish a short post with one before/after equation: normal LaTeX source on one side, MinecrafTeX PDF or MathML output on the other.
-* Add release artifacts for `MinecrafTeX-Math.ttf`, `MinecrafTeX-Math.woff2`, and a zipped LaTeX example folder.
-* Share the web demo link with communities that care about TeX, fonts, MathML, pixel art, or Minecraft-style UI work.
-* When the API settles, publish the web wrapper to npm and the LaTeX package to CTAN; those two indexes make the project discoverable without constant posting.
 
 ## Licensing
 
@@ -146,6 +126,4 @@ and uses no Minecraft game assets.
   <a href="https://hits.sh/github.com/ChattelionLuo/MinecrafTeX/">
     <img src="https://hits.sh/github.com/ChattelionLuo/MinecrafTeX.svg?style=for-the-badge&label=visits&color=7dB84a&labelColor=171b24" alt="MinecrafTeX repository visit count">
   </a>
-  <br>
-  <img src="assets/visits.svg" alt="MinecrafTeX repository visits over time" width="860">
 </p>
