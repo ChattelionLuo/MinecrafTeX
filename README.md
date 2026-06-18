@@ -7,6 +7,7 @@ in a Minecraft-inspired pixel style.
 [![Font: OFL 1.1](https://img.shields.io/badge/font-OFL%201.1-green.svg)](OFL.txt)
 [![LaTeX](https://img.shields.io/badge/engine-LuaLaTeX%20%7C%20XeLaTeX-orange.svg)](#use-it-in-latex)
 [![Web](https://img.shields.io/badge/web-Temml%20%2B%20MathML-purple.svg)](#use-it-on-the-web)
+[![Visits](https://hits.sh/github.com/ChattelionLuo/MinecrafTeX.svg?style=flat-square&label=visits&color=7dB84a&labelColor=171b24)](https://hits.sh/github.com/ChattelionLuo/MinecrafTeX/)
 
 It is not a fake equation renderer or a screenshot trick. You still write normal
 math syntax such as `\frac`, `\sqrt`, `\int`, `\sum`, scripts, matrices, and
@@ -142,5 +143,7 @@ and uses no Minecraft game assets.
 ## Visits
 
 <p align="center">
-  <img src="assets/visits.svg" alt="MinecrafTeX repository visits over time" width="860">
+  <a href="https://hits.sh/github.com/ChattelionLuo/MinecrafTeX/">
+    <img src="https://hits.sh/github.com/ChattelionLuo/MinecrafTeX.svg?style=for-the-badge&label=visits&color=7dB84a&labelColor=171b24" alt="MinecrafTeX repository visit count">
+  </a>
 </p>

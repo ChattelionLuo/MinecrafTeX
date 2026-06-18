@@ -8,6 +8,7 @@ tests/_roundtrip.ttf
 *.aux
 *.fdb_latexmk
 *.fls
+*.synctex.gz
 *.pdf
 !docs/**/*.pdf
 assets/_preview.png
