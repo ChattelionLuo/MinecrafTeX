@@ -81,7 +81,9 @@ _CONSTANTS = {
 _SCALARS = {
     "ScriptPercentScaleDown": 70,
     "ScriptScriptPercentScaleDown": 50,
-    "DelimitedSubFormulaMinHeight": 10 * PIXEL,
+    # Let \left|x\right| and \left(x\right) use the hand-balanced base glyphs;
+    # taller contents still trigger the pre-drawn variants or assemblies.
+    "DelimitedSubFormulaMinHeight": 7 * PIXEL,
     "DisplayOperatorMinHeight": 9 * PIXEL,
     "RadicalDegreeBottomRaisePercent": 60,
 }

@@ -6,6 +6,9 @@ node_modules/
 tests/_roundtrip.ttf
 *.log
 *.aux
+*.fdb_latexmk
+*.fls
 *.pdf
 !docs/**/*.pdf
+assets/_preview.png
 .DS_Store

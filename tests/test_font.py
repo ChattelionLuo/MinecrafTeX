@@ -31,6 +31,9 @@ def test_math_constants_pixel_snapped(font):
     # +, -, = operators centre on y=3.5 px, so the axis must too, otherwise the
     # engine half-pixel-shifts every stretchy delimiter. Allow any 0.5 px step.
     assert mc.AxisHeight.Value % 50 == 0
+    # Simple \left|x\right| should not be forced up to a tall variant; the base
+    # delimiter glyphs are hand-lowered to balance x-height content.
+    assert mc.DelimitedSubFormulaMinHeight == 700
 
 
 def test_core_glyphs_present(font):
@@ -38,6 +41,21 @@ def test_core_glyphs_present(font):
     for cp in (0x0030, 0x0031, 0x0078, 0x006E, 0x003D,
                0x222B, 0x2211, 0x221A, 0x2212):
         assert cp in cmap, f"missing U+{cp:04X}"
+
+
+def test_narrow_math_marks_have_tight_advances(font):
+    """Prime-like marks and bars should not keep the full monospace advance."""
+    cmap = font.getBestCmap()
+    hmtx = font["hmtx"].metrics
+    expected = {
+        0x0027: 300,  # apostrophe
+        0x007C: 400,  # vertical bar
+        0x2032: 300,  # prime
+        0x2033: 400,  # double prime
+    }
+    for cp, advance in expected.items():
+        assert cp in cmap, f"missing U+{cp:04X}"
+        assert hmtx[cmap[cp]][0] == advance
 
 
 def test_added_relation_glyphs_present(font):

@@ -22,6 +22,18 @@ _DATA = os.path.join(_HERE, "monocraft_characters.json")
 # Advance width Monocraft uses for almost every glyph (PIXEL_SIZE * 6).
 _DEFAULT_ADVANCE_PX = 6
 
+# A few math-heavy marks look loose if they keep the monospace text advance.
+# Keep the pixel art itself, but give narrow marks and fences tighter metrics so
+# formulas such as f'(x) and |x| read like math, not fixed-width prose.
+_ADVANCE_OVERRIDES_PX = {
+    0x0027: 3,  # apostrophe
+    0x007C: 4,  # vertical bar
+    0x2016: 5,  # double vertical line
+    0x2032: 3,  # prime
+    0x2033: 4,  # double prime
+    0x2034: 5,  # triple prime
+}
+
 
 def _rows_from_pixels(pixels: list[list[int]]) -> list[str]:
     return ["".join("#" if cell else "." for cell in row) for row in pixels]
@@ -53,7 +65,7 @@ def load_base_glyphs(max_codepoint: int = 0x10FFFF) -> list[Glyph]:
             name=e["name"],
             codepoint=cp,
             rows=rows,
-            advance_px=_DEFAULT_ADVANCE_PX,
+            advance_px=_ADVANCE_OVERRIDES_PX.get(cp, _DEFAULT_ADVANCE_PX),
             bottom_px=-int(e.get("descent", 0)),
         ))
     return glyphs

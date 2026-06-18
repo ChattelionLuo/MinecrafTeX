@@ -30,6 +30,9 @@
 - ✅ Common small delimiters dropped to the x-height centre so plain `(x)`,
   `[x]`, `{x}`, `|x|` look balanced; the radical leaves a 1 px gap before its
   radicand.
+- ✅ Tighter metrics for narrow math marks (`'`, `′`, `″`, `|`) and a lower
+  delimiter minimum height so simple `\left|x\right|` does not jump to an
+  unnecessarily tall variant.
 - ⬜ Discrete hand-designed script / scriptscript sizes (further crispness).
 
 ### Phase 4 — LaTeX package ✅ (working)
@@ -44,6 +47,7 @@
 ### Phase 5 — Web library 🚧
 - ✅ `web/` Temml LaTeX→MathML verified (`node verify.js`); confirms stretchy
   fences + `mfrac`/`msqrt`/`munderover` structure; `@font-face` + JS API + demo.
+- ✅ Web package copies built font artifacts into `web/dist/` and runs in CI.
 - ⬜ MathJax fallback; React component; live playground.
 
 ### Phase 6 — Distribution

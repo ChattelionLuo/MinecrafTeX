@@ -19,6 +19,7 @@
   "main": "src/index.js",
   "scripts": {
     "copy-font": "node scripts/copy-font.js",
+    "verify": "node verify.js",
     "serve": "npx --yes serve ."
   },
   "peerDependencies": {
