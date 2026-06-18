@@ -1,0 +1,149 @@
+% MinecrafTeX promo sheet -- a two-page project showcase.
+% Compile with: lualatex promo.tex
+\documentclass[11pt]{article}
+\usepackage[a4paper,margin=2.0cm]{geometry}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage[scale=1.45]{minecraftex}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{5pt}
+\newcommand{\heading}[1]{\medskip{\Large #1}\par\nobreak\smallskip}
+\newcommand{\pitch}[1]{#1:\quad}
+
+\begin{document}
+
+\begin{center}
+{\huge MinecrafTeX}\\[3pt]
+{\large Real LaTeX math, rendered in Minecraft-style pixels}
+\end{center}
+
+\smallskip
+\noindent
+\begin{minipage}[t]{0.8\textwidth}
+\vspace{0pt}
+\pitch{Plug-in \& play} An OpenType MATH font for LuaLaTeX, XeLaTeX, and web MathML.
+Write ordinary math syntax; MinecrafTeX supplies pixel glyphs, stretchable
+delimiters, radicals, large operators, and math alphabets on one crisp grid.\\
+
+\pitch{Why it matters}It is not a screenshot filter. Fractions, roots, scripts,
+matrices, sums, products, and braces are laid out by real math engines, then
+drawn in a playful pixel style.
+\end{minipage}\hfill
+\begin{minipage}[t]{0.18\textwidth}
+\vspace{15pt}
+\raggedleft
+\includegraphics[width=\linewidth]{qrcode.png}\\[-2pt]
+{\scriptsize github.com/\\ChattelionLuo/\\MinecrafTeX}
+\end{minipage}
+
+\heading{1.\quad Built for real formulas}
+
+The same source stays readable while the font handles spacing and stretch:
+\[
+  \left( \frac{1}{2}+\frac{x}{y} \right),\qquad
+  \binom{n}{k}=\frac{n!}{k!(n-k)!},
+\]
+\[
+  f'(x) = \lim_{h\to 0}\frac{f(x+h)-f(x)}{h},
+\]
+\[
+  i h\frac{\partial}{\partial t}\Psi(x,t)=
+  \left[-\frac{h^2}{2m}\frac{\partial^2}{\partial x^2}+V(x,t)\right]\Psi(x,t).
+\]
+
+\heading{2.\quad Stretchy pieces stay pixel-sharp}
+
+Roots, delimiters, and large operators are driven by the OpenType MATH table:
+\[
+  \sqrt{2},\quad
+  \sqrt{x^2+y^2},\quad
+  \sqrt{1+\sqrt{1+\sqrt{1+x}}},\quad
+  \left|\sum_{k=0}^{\infty}\frac{1}{2^k}\right|=2.
+\]
+
+\heading{3.\quad Good for PDFs and demos}
+
+Use the same visual language in printable notes, posters, README previews, and
+browser demos with Temml-generated MathML:
+\[
+  \int_{-\infty}^{\infty}\frac{1}{\sqrt{2\pi}}e^{-x^2/2}\,dx=1,
+  \qquad
+  \prod_{i=1}^{n}i=n!.
+\]
+
+\pagebreak[2]
+
+\heading{4.\quad Matrices, systems, and relations}
+
+\[
+  A=\begin{pmatrix}a&b\\c&d\end{pmatrix},\qquad
+  A^{-1}=\frac{1}{ad-bc}\begin{bmatrix}d&-b\\-c&a\end{bmatrix},\qquad
+  |x|=\begin{cases}\phantom{-}x,&x\geq0,\\-x,&x<0.\end{cases}
+\]
+\[
+  \alpha+\beta=\gamma,
+  \qquad \theta\in[0,2\pi),
+  \qquad \nabla\cdot F=\rho,
+  \qquad a\leq b\approx c\neq d.
+\]
+
+Dense formulas still come from ordinary LaTeX source:
+\[
+  p(x)=\frac{1}{\sqrt{(2\pi)^n|\Sigma|}}
+  \exp\!\left(-\frac{1}{2}(x-\mu)^T\Sigma^{-1}(x-\mu)\right).
+\]
+\[
+  \left\{
+  \begin{aligned}
+    \frac{\partial u}{\partial t} &= \nabla\cdot(D\nabla u)+f(u),\\
+    u(x,0) &= u_0(x),\qquad u|_{\partial\Omega}=0.
+  \end{aligned}
+  \right.
+\]
+
+Tables keep the same pixel voice for labels, code, rules, and inline math:
+\begin{center}
+\footnotesize
+\begin{mctextable}{l|>{\centering\arraybackslash}p{0.15\textwidth}|>{\centering\arraybackslash}p{0.27\textwidth}|>{\centering\arraybackslash}p{0.27\textwidth}}
+\multicolumn{2}{c|}{} & Call & Put \\
+\hline
+Delta & $\displaystyle\frac{\partial V}{\partial S}$
+  & $N(d_{+})$
+  & $N(d_{+})-1$ \\
+\hline
+Gamma & $\displaystyle\frac{\partial^2 V}{\partial S^2}$
+  & \multicolumn{2}{c}{$\displaystyle\frac{N'(d_{+})}{S\sigma\sqrt{T-t}}$} \\
+\hline
+Vega & $\displaystyle\frac{\partial V}{\partial \sigma}$
+  & \multicolumn{2}{c}{$\displaystyle S N'(d_{+})\sqrt{T-t}$} \\
+\hline
+Theta & $\displaystyle\frac{\partial V}{\partial t}$
+  & $\begin{aligned}
+      &-\frac{S N'(d_{+})\sigma}{2\sqrt{T-t}}\\
+      &{}-rKe^{-r(T-t)}N(d_{-})
+    \end{aligned}$
+  & $\begin{aligned}
+      &-\frac{S N'(d_{+})\sigma}{2\sqrt{T-t}}\\
+      &{}+rKe^{-r(T-t)}N(-d_{-})
+    \end{aligned}$
+\end{mctextable}
+\end{center}
+
+\heading{5.\quad What the project includes}
+
+\begin{itemize}
+  \item A pure Python font build pipeline using fontTools, no FontForge needed.
+  \item A LaTeX package for LuaLaTeX and XeLaTeX through unicode-math.
+  \item A small web wrapper: LaTeX source to Temml MathML to native browser math.
+  \item MIT tooling; OFL font derived from Monocraft.
+\end{itemize}
+\vspace{15pt}
+\heading{Have a try !}
+
+\begin{center}
+{\large github.com/ChattelionLuo/MinecrafTeX}\\
+{\large Star it, test it, and send equations that break it.}
+\end{center}
+
+\end{document}

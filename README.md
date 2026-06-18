@@ -15,8 +15,8 @@ math syntax such as `\frac`, `\sqrt`, `\int`, `\sum`, scripts, matrices, and
 that tell TeX or MathML how to stretch and place the pieces.
 
 <p align="center">
-  <img src="tests/example_p1.png" alt="MinecrafTeX showcase page" width="48%">
-  <img src="tests/clt_p1.png"     alt="Central Limit Theorem in MinecrafTeX" width="48%">
+  <img src="tests/promo_p1.png" alt="MinecrafTeX promotional showcase page 1" width="48%">
+  <img src="tests/promo_p2.png" alt="MinecrafTeX promotional showcase page 2" width="48%">
 </p>
 
 ---
@@ -146,4 +146,6 @@ and uses no Minecraft game assets.
   <a href="https://hits.sh/github.com/ChattelionLuo/MinecrafTeX/">
     <img src="https://hits.sh/github.com/ChattelionLuo/MinecrafTeX.svg?style=for-the-badge&label=visits&color=7dB84a&labelColor=171b24" alt="MinecrafTeX repository visit count">
   </a>
+  <br>
+  <img src="assets/visits.svg" alt="MinecrafTeX repository visits over time" width="860">
 </p>

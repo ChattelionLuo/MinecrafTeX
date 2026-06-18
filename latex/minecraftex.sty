@@ -20,6 +20,7 @@
 
 \RequirePackage{fontspec}
 \RequirePackage{unicode-math}
+\RequirePackage{array}
 
 % Load the pixel math font as BOTH the math font and the upright text font so
 % that text and equations match.
@@ -31,5 +32,27 @@
   Path=\mctex@fontpath ,
   Scale=\mctex@scale ,
 ]
+\setsansfont{MinecrafTeX-Math.ttf}[
+  Path=\mctex@fontpath ,
+  Scale=\mctex@scale ,
+]
+\setmonofont{MinecrafTeX-Math.ttf}[
+  Path=\mctex@fontpath ,
+  Scale=\mctex@scale ,
+]
+
+% Table support stays on LaTeX's standard tabular/array path, but snaps the
+% visible rules and padding to the same blocky rhythm as the font. One font
+% pixel is 0.1em on MinecrafTeX's grid, so table rules use that thickness
+% instead of LaTeX's usual hairline rule.
+\newcommand{\minecraftextablesetup}{%
+  \setlength{\arrayrulewidth}{0.1em}%
+  \setlength{\tabcolsep}{4pt}%
+  \setlength{\extrarowheight}{0.35em}%
+  \renewcommand{\arraystretch}{1.28}%
+}
+\newenvironment{mctextable}[1]
+  {\begingroup\minecraftextablesetup\begin{tabular}{#1}}
+  {\end{tabular}\endgroup}
 
 \endinput
