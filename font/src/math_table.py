@@ -72,7 +72,7 @@ _CONSTANTS = {
     "RadicalVerticalGap": 1 * PIXEL,
     "RadicalDisplayStyleVerticalGap": 1 * PIXEL,
     "RadicalRuleThickness": 1 * PIXEL,
-    "RadicalExtraAscender": 1 * PIXEL,
+    "RadicalExtraAscender": 0,
     "RadicalKernBeforeDegree": 1 * PIXEL,
     "RadicalKernAfterDegree": -1 * PIXEL,
 }

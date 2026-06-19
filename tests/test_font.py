@@ -8,6 +8,7 @@ from fontTools.ttLib import TTFont
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TTF = os.path.join(ROOT, "font", "dist", "MinecrafTeX-Math.ttf")
+PROP_TTF = os.path.join(ROOT, "font", "dist", "MinecrafTeX-Math-Proportional.ttf")
 
 
 @pytest.fixture(scope="module")
@@ -58,6 +59,32 @@ def test_narrow_math_marks_have_tight_advances(font):
         assert hmtx[cmap[cp]][0] == advance
 
 
+def test_narrow_marks_are_optically_centered(font):
+    """Tight punctuation should not be left-pinned inside its narrower advance."""
+    cmap = font.getBestCmap()
+    glyf = font["glyf"]
+    hmtx = font["hmtx"].metrics
+    for cp in (0x007C, 0x0027):
+        name = cmap[cp]
+        advance = hmtx[name][0]
+        glyph = glyf[name]
+        left_gap = glyph.xMin
+        right_gap = advance - glyph.xMax
+        assert abs(left_gap - right_gap) <= 50
+
+
+def test_proportional_font_has_natural_text_metrics():
+    if not os.path.exists(PROP_TTF):
+        subprocess.run([sys.executable, os.path.join(ROOT, "font", "build_font.py")],
+                       check=True)
+    font = TTFont(PROP_TTF)
+    cmap = font.getBestCmap()
+    hmtx = font["hmtx"].metrics
+    assert hmtx[cmap[ord("A")]][0] == 600
+    assert hmtx[cmap[ord("i")]][0] < hmtx[cmap[ord("A")]][0]
+    assert hmtx[cmap[ord("i")]][1] == 50
+
+
 def test_added_relation_glyphs_present(font):
     """Common relations/operators Monocraft lacks are now drawn as pixels."""
     cmap = font.getBestCmap()
@@ -105,6 +132,24 @@ def test_math_variants_stretchy(font):
     # Each construction lists at least the base plus one larger variant.
     for c in mv.VertGlyphConstruction:
         assert c.VariantCount >= 1
+
+
+def test_tall_square_bracket_variant_available(font):
+    """Tall matrices should use a solid right bracket before assembly fallback."""
+    mv = font["MATH"].table.MathVariants
+    idx = mv.VertGlyphCoverage.glyphs.index("right_square_bracket")
+    variants = mv.VertGlyphConstruction[idx].MathGlyphVariantRecord
+    assert max(v.AdvanceMeasurement for v in variants) >= 10100
+
+
+def test_radical_connector_aligns_with_vinculum(font):
+    """The radical connector should overlap the overbar on the same pixel row."""
+    mc = font["MATH"].table.MathConstants
+    assert mc.RadicalExtraAscender.Value == 0
+    glyf = font["glyf"]
+    hmtx = font["hmtx"].metrics
+    for name in ("radical", "radical.v9", "radical.v25"):
+        assert glyf[name].xMax >= hmtx[name][0] + 100
 
 
 def test_integral_italic_correction(font):

@@ -58,7 +58,11 @@ class Glyph:
     name: str
     codepoint: int | None
     rows: list[str]
-    advance_px: int
+    advance_px: float
+    # Horizontal offset of the pixel art relative to the glyph origin. Monocraft
+    # uses a few half-pixel side bearings; preserving them keeps narrow letters
+    # and punctuation optically centred instead of left-pinned in a fixed cell.
+    x_offset_px: float = 0.0
     # y (in pixels) of the bottom-most art row relative to the baseline.
     # 0 => art sits on the baseline; -2 => art bottom is two px below baseline.
     bottom_px: int = 0
@@ -93,6 +97,13 @@ def _merge_horizontal_runs(rows: list[str]) -> list[tuple[int, int, int]]:
     return runs
 
 
+def _ink_x_bounds(rows: list[str]) -> tuple[int, int] | None:
+    xs = [x for row in rows for x, cell in enumerate(row) if cell in "#X"]
+    if not xs:
+        return None
+    return min(xs), max(xs) + 1
+
+
 def draw_glyph(glyph: Glyph) -> "TTGlyphPen":
     """Render a Glyph to a TTGlyphPen as axis-aligned rectangles.
 
@@ -103,6 +114,7 @@ def draw_glyph(glyph: Glyph) -> "TTGlyphPen":
     pen = TTGlyphPen(None)
     rows = glyph.rows
     h = len(rows)
+    x_offset = int(round(glyph.x_offset_px * PIXEL))
     # Pixel grid -> font units. The bottom art row maps to y = bottom_px*PIXEL.
     bottom = glyph.bottom_px * PIXEL
     for (r, x_start, length) in _merge_horizontal_runs(rows):
@@ -110,8 +122,8 @@ def draw_glyph(glyph: Glyph) -> "TTGlyphPen":
         y_top_px = (h - r)            # top edge of this pixel row, in px from art bottom
         y0 = bottom + (y_top_px - 1) * PIXEL    # bottom edge of the pixel row
         y1 = bottom + y_top_px * PIXEL          # top edge
-        x0 = x_start * PIXEL
-        x1 = (x_start + length) * PIXEL
+        x0 = x_offset + x_start * PIXEL
+        x1 = x_offset + (x_start + length) * PIXEL
         pen.moveTo((x0, y0))
         pen.lineTo((x0, y1))
         pen.lineTo((x1, y1))
@@ -159,7 +171,12 @@ def build_font(spec: FontSpec) -> TTFont:
     for g in spec.glyphs:
         pen = draw_glyph(g)
         glyf[g.name] = pen.glyph()
-        metrics[g.name] = (g.advance_px * PIXEL, 0)
+        bounds = _ink_x_bounds(g.rows)
+        if bounds is None:
+            left_side_bearing = 0
+        else:
+            left_side_bearing = int(round((g.x_offset_px + bounds[0]) * PIXEL))
+        metrics[g.name] = (int(round(g.advance_px * PIXEL)), left_side_bearing)
 
     fb.setupGlyf(glyf)
     fb.setupHorizontalMetrics(metrics)

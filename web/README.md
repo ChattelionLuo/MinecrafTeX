@@ -13,7 +13,7 @@ reads the font's MATH table.
 <script src="https://cdn.jsdelivr.net/npm/temml/dist/temml.min.js"></script>
 <script type="module">
   import { injectFont, renderMath } from "./src/index.js";
-  injectFont("../font/dist/MinecrafTeX-Math.woff2");
+      injectFont("../font/dist/MinecrafTeX-Math-Proportional.woff2");
   renderMath(String.raw`\frac{\sqrt{x}}{n} = \sum_{k} a_k`,
              document.getElementById("eq"));
 </script>
@@ -22,6 +22,9 @@ reads the font's MATH table.
 
 See [`demo/index.html`](demo/index.html) for a full page. Native MathML support
 is best in Firefox.
+
+Use `MinecrafTeX-Math-Proportional.woff2` for natural text and math spacing.
+Use `MinecrafTeX-Math.woff2` if you specifically want the older fixed-cell look.
 
 ## Verify
 

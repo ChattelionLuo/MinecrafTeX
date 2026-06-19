@@ -1,4 +1,4 @@
-"""Build MinecrafTeX-Math.ttf (and .woff2) from pixel glyph definitions.
+"""Build MinecrafTeX mono/proportional TTF and WOFF2 files.
 
 Pipeline:
   1. Base pixel glyphs imported from Monocraft (Latin, Greek, operators, ...).
@@ -52,8 +52,8 @@ _SYMBOL_ALIASES = {
 }
 
 
-def collect_glyphs():
-    base = load_base_glyphs()
+def collect_glyphs(proportional: bool = False):
+    base = load_base_glyphs(proportional=proportional)
     # Drop the common delimiters 1 px so they centre on x-height content.
     for g in base:
         if g.codepoint in _DELIMITER_DROP_CODEPOINTS:
@@ -68,9 +68,8 @@ def collect_glyphs():
     return glyphs
 
 
-def main() -> None:
-    os.makedirs(DIST, exist_ok=True)
-    glyphs = collect_glyphs()
+def build_one(filename: str, family: str, proportional: bool) -> None:
+    glyphs = collect_glyphs(proportional=proportional)
     # Alias the Mathematical Alphanumeric Symbols (math italic/bold/... letters
     # and digits) onto the plain pixel glyphs so they render as pixels.
     name_by_cp = {g.codepoint: g.name for g in glyphs if g.codepoint is not None}
@@ -80,23 +79,30 @@ def main() -> None:
         base = name_by_cp.get(base_cp)
         if base is not None and cp not in name_by_cp:
             aliases.setdefault(cp, base)
-    spec = FontSpec(glyphs=glyphs, extra_cmap=aliases)
+    spec = FontSpec(family=family, glyphs=glyphs, extra_cmap=aliases)
     font = build_font(spec)
     add_math_table(font)
     add_math_script(font, anchor_glyph="space")
-    print(f"glyphs: {len(glyphs)}  alphanumeric aliases: {len(aliases)}")
+    print(f"{filename}: glyphs: {len(glyphs)}  alphanumeric aliases: {len(aliases)}")
 
-    ttf_path = os.path.join(DIST, "MinecrafTeX-Math.ttf")
+    ttf_path = os.path.join(DIST, filename)
     save(font, ttf_path)
     print(f"wrote {ttf_path}")
 
     try:
         font.flavor = "woff2"
-        woff2_path = os.path.join(DIST, "MinecrafTeX-Math.woff2")
+        woff2_path = os.path.splitext(ttf_path)[0] + ".woff2"
         font.save(woff2_path)
         print(f"wrote {woff2_path}")
     except Exception as exc:  # pragma: no cover - optional dependency
         print(f"skipped woff2 ({exc}); run 'pip install brotli' to enable")
+
+
+def main() -> None:
+    os.makedirs(DIST, exist_ok=True)
+    build_one("MinecrafTeX-Math.ttf", "MinecrafTeX Math", proportional=False)
+    build_one("MinecrafTeX-Math-Proportional.ttf", "MinecrafTeX Math Proportional",
+              proportional=True)
 
 
 if __name__ == "__main__":

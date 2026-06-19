@@ -8,7 +8,6 @@
 \documentclass[11pt]{article}
 \usepackage[a4paper,margin=2.2cm]{geometry}
 \usepackage{amsmath}
-\usepackage{graphicx}
 \usepackage[scale=1.5]{minecraftex}
 
 \setlength{\parindent}{0pt}
@@ -23,30 +22,23 @@
 \end{center}
 
 \bigskip
-\noindent
-\begin{minipage}[t]{0.80\textwidth}
-\vspace{0pt}
 Every symbol on these two pages -- the prose, the Greek letters $\alpha,\beta,
 \gamma,\pi$, the operators, and the equations -- is drawn from one pixel font.
 The delimiters, roots and big operators stretch to fit, so the layout matches
 what LaTeX would produce with any other math font.
-\end{minipage}\hfill
-\begin{minipage}[t]{0.18\textwidth}
-\vspace{0pt}
-\raggedleft
-\includegraphics[width=\linewidth]{qrcode.png}
-\end{minipage}
+
+\includegraphics[width=0.3\textwidth]{qrcode.png}
 
 \heading{1.\quad Fractions and continued fractions}
 
 A fraction bar sits on the math axis and the surrounding delimiters grow to
 wrap whatever they contain:
 \[
-  \frac{a+b}{c+d},
+  \frac{a+b}{c+d}
   \qquad
-  \left( \frac{1}{2} + \frac{x}{y} \right),
+  \left( \frac{1}{2} + \frac{x}{y} \right)
   \qquad
-  \binom{n}{k} = \frac{n!}{k!\,(n-k)!},
+  \binom{n}{k} = \frac{n!}{k!\,(n-k)!}.
 \]
 \[
 i h \frac{\partial}{\partial t} \Psi(x, t)=\left[-\frac{h^2}{2 m} \frac{\partial^2}{\partial x^2}+V(x, t)\right] \Psi(x, t) .
@@ -84,7 +76,7 @@ Derivatives, limits and definite integrals with stretchy operators:
   \int_{a}^{b} f'(x)\,dx = f(b) - f(a).
 \]
 
-\pagebreak[2]
+\newpage
 
 \heading{4.\quad Series and products}
 

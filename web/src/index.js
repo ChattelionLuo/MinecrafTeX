@@ -1,7 +1,7 @@
 // MinecrafTeX web API (thin wrapper around Temml).
 //
 //   import { renderMath, injectFont } from "minecraftex";
-//   injectFont("/fonts/MinecrafTeX-Math.woff2");
+//   injectFont("/fonts/MinecrafTeX-Math-Proportional.woff2");
 //   renderMath("\\frac{\\sqrt{x}}{n}", document.getElementById("eq"));
 //
 // Temml is a peer dependency; the caller provides it (CDN or bundler).

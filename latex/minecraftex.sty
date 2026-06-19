@@ -4,8 +4,9 @@
 %% Requires a Unicode TeX engine: compile with lualatex or xelatex.
 %%
 %% Usage:
-%%     \usepackage{minecraftex}            % uses the bundled dist font
-%%     \usepackage[scale=1.4]{minecraftex} % scale the pixel font up
+%%     \usepackage{minecraftex}                         % proportional spacing
+%%     \usepackage[scale=1.4]{minecraftex}              % scale the pixel font up
+%%     \usepackage[spacing=mono]{minecraftex}           % fixed-cell spacing
 %%
 \NeedsTeXFormat{LaTeX2e}
 \ProvidesPackage{minecraftex}[2026/06/16 v0.1 MinecrafTeX pixel math]
@@ -14,9 +15,21 @@
 \SetupKeyvalOptions{family=mctex,prefix=mctex@}
 % Font scale (keep an integer-ish multiple to preserve crisp pixels).
 \DeclareStringOption[1.0]{scale}
-% Path to the directory holding MinecrafTeX-Math.ttf.
+% Spacing mode: proportional (natural text/math spacing) or mono (fixed cell).
+\DeclareStringOption[proportional]{spacing}
+% Path to the directory holding the MinecrafTeX font files.
 \DeclareStringOption[../font/dist/]{fontpath}
 \ProcessKeyvalOptions*
+
+\newcommand{\mctex@fontfile}{MinecrafTeX-Math-Proportional.ttf}
+\edef\mctex@monospacing{mono}
+\edef\mctex@fixedspacing{monospace}
+\ifx\mctex@spacing\mctex@monospacing
+  \renewcommand{\mctex@fontfile}{MinecrafTeX-Math.ttf}
+\fi
+\ifx\mctex@spacing\mctex@fixedspacing
+  \renewcommand{\mctex@fontfile}{MinecrafTeX-Math.ttf}
+\fi
 
 \RequirePackage{fontspec}
 \RequirePackage{unicode-math}
@@ -24,19 +37,19 @@
 
 % Load the pixel math font as BOTH the math font and the upright text font so
 % that text and equations match.
-\setmathfont{MinecrafTeX-Math.ttf}[
+\setmathfont{\mctex@fontfile}[
   Path=\mctex@fontpath ,
   Scale=\mctex@scale ,
 ]
-\setmainfont{MinecrafTeX-Math.ttf}[
+\setmainfont{\mctex@fontfile}[
   Path=\mctex@fontpath ,
   Scale=\mctex@scale ,
 ]
-\setsansfont{MinecrafTeX-Math.ttf}[
+\setsansfont{\mctex@fontfile}[
   Path=\mctex@fontpath ,
   Scale=\mctex@scale ,
 ]
-\setmonofont{MinecrafTeX-Math.ttf}[
+\setmonofont{\mctex@fontfile}[
   Path=\mctex@fontpath ,
   Scale=\mctex@scale ,
 ]

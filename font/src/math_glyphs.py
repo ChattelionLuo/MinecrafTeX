@@ -28,7 +28,8 @@ from pixelfont import Glyph, PIXEL, AXIS_PX
 # engine never has to half-pixel-shift them. We pre-draw a generous range so that
 # realistic content (fractions, nested fractions) always hits a crisp solid
 # variant and only pathologically tall content falls back to glyph assembly.
-_VARIANT_HEIGHTS = [9, 11, 13, 15, 17, 19, 21, 23, 25]
+_VARIANT_HEIGHTS = [9, 11, 13, 15, 17, 19, 21, 23, 25,
+                    31, 37, 43, 51, 61, 73, 87, 101]
 
 
 @dataclass
@@ -66,7 +67,8 @@ def _centred_bottom(height_px: int) -> int:
 def _add_vertical_delimiter(key: str, codepoint: int, base_name: str,
                             base_height_px: int,
                             top: list[str], ext: str, bottom: list[str],
-                            mid: list[str] | None = None) -> None:
+                            mid: list[str] | None = None,
+                            advance_px: int = 5) -> None:
     """Register size variants + an assembly for a vertically-stretchy symbol.
 
     Variant glyph i = top + ext*k (+ mid + ext*k) + bottom, sized to the target
@@ -82,7 +84,7 @@ def _add_vertical_delimiter(key: str, codepoint: int, base_name: str,
             k2 = (h - len(top) - len(bottom) - len(mid)) // 2
             rows = top + [ext] * k2 + mid + [ext] * k2 + bottom
         name = f"{key}.v{h}"
-        _g(name, rows, _centred_bottom(len(rows)))
+        _g(name, rows, _centred_bottom(len(rows)), advance_px=advance_px)
         variants.append((name, len(rows) * PIXEL))
 
     # Assembly parts (drawn at baseline; engine stacks + centres them). Each part
@@ -92,9 +94,9 @@ def _add_vertical_delimiter(key: str, codepoint: int, base_name: str,
     bot_name = f"{key}.bot"
     ext_name = f"{key}.ext"
     top_name = f"{key}.top"
-    _g(bot_name, bottom, 0)
-    _g(ext_name, [ext], 0)
-    _g(top_name, top, 0)
+    _g(bot_name, bottom, 0, advance_px=advance_px)
+    _g(ext_name, [ext], 0, advance_px=advance_px)
+    _g(top_name, top, 0, advance_px=advance_px)
 
     nb, nt = len(bottom) * PIXEL, len(top) * PIXEL
     if mid is None:
@@ -105,7 +107,7 @@ def _add_vertical_delimiter(key: str, codepoint: int, base_name: str,
         ]
     else:
         mid_name = f"{key}.mid"
-        _g(mid_name, mid, 0)
+        _g(mid_name, mid, 0, advance_px=advance_px)
         nm = len(mid) * PIXEL
         parts = [
             (bot_name, 0, nb, nb, False),
@@ -158,15 +160,13 @@ _add_vertical_delimiter(
 
 # --- Radical (Monocraft has no U+221A): base + upward-growing variants -------
 #
-# The surd is 6 px wide. The rising stroke is in column 4; column 5 carries a
-# 1 px "tongue" ONLY on the very top row. The engine draws the vinculum starting
-# at the glyph's advance (6 px) and places the radicand there too -- so the tongue
-# bridges the stroke to the vinculum (overbar stays connected) while leaving a
-# clean 1 px gap (column 5) between the stroke and the radicand body, so digits
-# and letters no longer touch the surd.
+# The surd has a 6 px advance. The top row draws 1 px past that advance so it
+# overlaps TeX's vinculum; an exact edge-to-edge join can rasterize with a
+# hairline seam in PDFs. MinecrafTeX sets RadicalExtraAscender to zero so this
+# connector and the overbar occupy the same pixel row.
 _RAD_CHECK = ["#...#.", ".#.#..", "..#..."]   # the V, bottom 3 rows (width 6)
 _RAD_VBAR = "....#."                            # rising right stroke (col 4)
-_RAD_TOP = "....##"                             # stroke + tongue out to advance
+_RAD_TOP = "....###"                            # stroke + 1 px overbar overlap
 
 
 def _radical_rows(height_px: int) -> list[str]:
@@ -191,7 +191,7 @@ _constructions.append(Construction(
     0x221A, "radical", 7 * PIXEL, _rad_variants,
     [("radical.bot", 0, len(_RAD_CHECK) * PIXEL, len(_RAD_CHECK) * PIXEL, False),
      ("radical.ext", PIXEL, PIXEL, PIXEL, True),
-     ("radical.top", PIXEL, 0, PIXEL, False)]))
+    ("radical.top", PIXEL, 0, PIXEL, False)]))
 
 
 # --- Display-size big operators ---------------------------------------------

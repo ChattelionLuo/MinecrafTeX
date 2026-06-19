@@ -4,7 +4,12 @@ const path = require("path");
 const root = path.resolve(__dirname, "..", "..");
 const sourceDir = path.join(root, "font", "dist");
 const targetDir = path.join(__dirname, "..", "dist");
-const files = ["MinecrafTeX-Math.ttf", "MinecrafTeX-Math.woff2"];
+const files = [
+  "MinecrafTeX-Math.ttf",
+  "MinecrafTeX-Math.woff2",
+  "MinecrafTeX-Math-Proportional.ttf",
+  "MinecrafTeX-Math-Proportional.woff2",
+];
 
 fs.mkdirSync(targetDir, { recursive: true });
 

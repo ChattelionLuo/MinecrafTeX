@@ -34,12 +34,43 @@ _ADVANCE_OVERRIDES_PX = {
     0x2034: 5,  # triple prime
 }
 
+_CENTERED_TIGHT_MARKS = set(_ADVANCE_OVERRIDES_PX)
+
+
+def _ink_bounds_px(rows: list[str]) -> tuple[int, int] | None:
+    xs = [x for row in rows for x, cell in enumerate(row) if cell == "#"]
+    if not xs:
+        return None
+    return min(xs), max(xs) + 1
+
+
+def _center_offset_px(rows: list[str], advance_px: float) -> float:
+    bounds = _ink_bounds_px(rows)
+    if bounds is None:
+        return 0.0
+    left, right = bounds
+    return (advance_px - (right - left)) / 2 - left
+
+
+def _proportional_advance_px(cp: int, rows: list[str]) -> float:
+    override = _ADVANCE_OVERRIDES_PX.get(cp)
+    if override is not None:
+        return override
+    bounds = _ink_bounds_px(rows)
+    if bounds is None:
+        return 4
+    left, right = bounds
+    # Keep one pixel of total side bearing around the visible ink while allowing
+    # naturally wider Monocraft glyphs (arrows, symbols) to remain wide.
+    return max(2, right - left + 1)
+
 
 def _rows_from_pixels(pixels: list[list[int]]) -> list[str]:
     return ["".join("#" if cell else "." for cell in row) for row in pixels]
 
 
-def load_base_glyphs(max_codepoint: int = 0x10FFFF) -> list[Glyph]:
+def load_base_glyphs(max_codepoint: int = 0x10FFFF,
+                     proportional: bool = False) -> list[Glyph]:
     """Return every Monocraft glyph with a real codepoint up to `max_codepoint`.
 
     By default we load the whole set (Latin, Greek, Cyrillic, punctuation,
@@ -61,11 +92,20 @@ def load_base_glyphs(max_codepoint: int = 0x10FFFF) -> list[Glyph]:
             continue
         seen.add(cp)
         rows = _rows_from_pixels(e["pixels"])
+        advance_px = (_proportional_advance_px(cp, rows) if proportional
+                      else _ADVANCE_OVERRIDES_PX.get(cp, _DEFAULT_ADVANCE_PX))
+        if proportional:
+            x_offset_px = _center_offset_px(rows, advance_px)
+        elif cp in _CENTERED_TIGHT_MARKS:
+            x_offset_px = _center_offset_px(rows, advance_px)
+        else:
+            x_offset_px = float(e.get("leftMargin", 0))
         glyphs.append(Glyph(
             name=e["name"],
             codepoint=cp,
             rows=rows,
-            advance_px=_ADVANCE_OVERRIDES_PX.get(cp, _DEFAULT_ADVANCE_PX),
+            advance_px=advance_px,
+            x_offset_px=x_offset_px,
             bottom_px=-int(e.get("descent", 0)),
         ))
     return glyphs

@@ -7,6 +7,7 @@ in a Minecraft-inspired pixel style.
 [![Font: OFL 1.1](https://img.shields.io/badge/font-OFL%201.1-green.svg)](OFL.txt)
 [![LaTeX](https://img.shields.io/badge/engine-LuaLaTeX%20%7C%20XeLaTeX-orange.svg)](#use-it-in-latex)
 [![Web](https://img.shields.io/badge/web-Temml%20%2B%20MathML-purple.svg)](#use-it-on-the-web)
+[![Visits](https://hits.sh/github.com/ChattelionLuo/MinecrafTeX.svg?style=flat-square&label=visits&color=7dB84a&labelColor=171b24)](https://hits.sh/github.com/ChattelionLuo/MinecrafTeX/)
 
 It is not a fake equation renderer or a screenshot trick. You still write normal
 math syntax such as `\frac`, `\sqrt`, `\int`, `\sum`, scripts, matrices, and
@@ -14,8 +15,8 @@ math syntax such as `\frac`, `\sqrt`, `\int`, `\sum`, scripts, matrices, and
 that tell TeX or MathML how to stretch and place the pieces.
 
 <p align="center">
-  <img src="tests/promo_p1.png" alt="MinecrafTeX promotional showcase page 1" width="48%">
-  <img src="tests/promo_p2.png" alt="MinecrafTeX promotional showcase page 2" width="48%">
+  <img src="tests/example_p1.png" alt="MinecrafTeX showcase page" width="48%">
+  <img src="tests/clt_p1.png"     alt="Central Limit Theorem in MinecrafTeX" width="48%">
 </p>
 
 ---
@@ -67,8 +68,8 @@ Use `xelatex` instead if that is your preferred Unicode TeX engine. Plain
 
 Worked examples live in [`latex/`](latex/):
 
-* [`latex/example.tex`](latex/example.tex) — a two-page showcase.
-* [`latex/clt.tex`](latex/clt.tex) — a proof of the Central Limit Theorem.
+* [`latex/example.tex`](latex/example.tex) — a two-page math showcase.
+* [`latex/clt.tex`](latex/clt.tex) — a short proof of the Central Limit Theorem.
 
 ## Use it on the web
 
@@ -85,6 +86,17 @@ npm run serve      # then open the demo in your browser
 
 See [`web/demo/index.html`](web/demo/index.html) for a live LaTeX → pixel-MathML demo.
 
+## Build the font yourself
+
+```bash
+pip install fonttools brotli
+python font/build_font.py        # -> TTF/WOFF2 fonts
+python -m pytest tests/test_font.py -q
+python tests/validate.py         # sanity-check + render sample PNGs
+```
+
+The whole grid is pixel-snapped: `UPM = 1000`, `1px = 100 units`, so every
+edge, bar and gap lands on a whole-pixel boundary and stays sharp at any scale.
 
 ## Repository layout
 
@@ -93,7 +105,7 @@ font/      pixel-font build pipeline (Python + fontTools, no FontForge needed)
   src/       pixelfont.py, monocraft_loader.py, math_glyphs.py,
              math_alphanum.py, math_table.py, gsub.py
   build_font.py
-  dist/      built MinecrafTeX-Math.ttf / .woff2
+  dist/      built TTF and WOFF2 fonts
 latex/     minecraftex.sty + example documents (example.tex, clt.tex)
 web/       npm package + browser demo (Temml)
 tests/     validation + rendered samples
@@ -104,8 +116,6 @@ tests/     validation + rendered samples
 The font core (pixel → OpenType + MATH table) builds, validates, round-trips
 and renders. Two worked LaTeX documents render fully in pixels with adaptive
 sizing. See [`ROADMAP.md`](ROADMAP.md) for what's next.
-
-
 
 ## Licensing
 
