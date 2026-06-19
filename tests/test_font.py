@@ -137,6 +137,7 @@ def test_standard_galactic_glyphs_and_feature_present(font):
             mappings.update(getattr(subtable, "mapping", {}))
     assert mappings[cmap[ord("a")]] == cmap[0xEB40]
     assert mappings[cmap[ord("A")]] == cmap[0xEB40]
+    assert mappings[cmap[0x1D431]] == cmap[0xEB57]  # bold math x -> SGA x
 
 
 def test_math_alphanumeric_aliased(font):

@@ -17,20 +17,43 @@ from fontTools.ttLib import TTFont
 
 _GALACTIC_BASE = 0xEB40
 
+_LATIN_MATH_PLANES = [
+    (0x1D400, 0x1D41A),  # bold
+    (0x1D434, 0x1D44E),  # italic/default variables
+    (0x1D468, 0x1D482),  # bold italic
+    (0x1D49C, 0x1D4B6),  # script
+    (0x1D4D0, 0x1D4EA),  # bold script
+    (0x1D504, 0x1D51E),  # fraktur
+    (0x1D538, 0x1D552),  # double-struck
+    (0x1D56C, 0x1D586),  # bold fraktur
+    (0x1D5A0, 0x1D5BA),  # sans-serif
+    (0x1D5D4, 0x1D5EE),  # sans-serif bold
+    (0x1D608, 0x1D622),  # sans-serif italic
+    (0x1D63C, 0x1D656),  # sans-serif bold italic
+    (0x1D670, 0x1D68A),  # monospace
+]
+
 
 def _galactic_feature(font: TTFont) -> str:
     cmap = font.getBestCmap()
     lines: list[str] = []
+    seen_sources: set[str] = set()
+
+    def add(source: str | None, target: str | None) -> None:
+        if source is None or target is None or source in seen_sources:
+            return
+        seen_sources.add(source)
+        lines.append(f"    sub {source} by {target};")
+
     for index, letter in enumerate("abcdefghijklmnopqrstuvwxyz"):
         target = cmap.get(_GALACTIC_BASE + index)
-        lower = cmap.get(ord(letter))
-        upper = cmap.get(ord(letter.upper()))
         if target is None:
             continue
-        if lower is not None:
-            lines.append(f"    sub {lower} by {target};")
-        if upper is not None:
-            lines.append(f"    sub {upper} by {target};")
+        add(cmap.get(ord(letter)), target)
+        add(cmap.get(ord(letter.upper())), target)
+        for cap_start, small_start in _LATIN_MATH_PLANES:
+            add(cmap.get(cap_start + index), target)
+            add(cmap.get(small_start + index), target)
     if not lines:
         return ""
     return "feature ss01 {\n" + "\n".join(lines) + "\n} ss01;\n"

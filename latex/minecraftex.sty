@@ -78,16 +78,54 @@
 \setmonofont{\mctex@fontfile}[\mctex@textfeatures]
 \newfontfamily\mctex@galacticfont{\mctex@fontfile}[\mctex@galacticfeatures]
 
+\edef\mctex@normalmathcodes{%
+  \noexpand\Umathcodenum`A=\the\Umathcodenum`A\relax \noexpand\Umathcodenum`B=\the\Umathcodenum`B\relax \noexpand\Umathcodenum`C=\the\Umathcodenum`C\relax \noexpand\Umathcodenum`D=\the\Umathcodenum`D\relax \noexpand\Umathcodenum`E=\the\Umathcodenum`E\relax \noexpand\Umathcodenum`F=\the\Umathcodenum`F\relax
+  \noexpand\Umathcodenum`G=\the\Umathcodenum`G\relax \noexpand\Umathcodenum`H=\the\Umathcodenum`H\relax \noexpand\Umathcodenum`I=\the\Umathcodenum`I\relax \noexpand\Umathcodenum`J=\the\Umathcodenum`J\relax \noexpand\Umathcodenum`K=\the\Umathcodenum`K\relax \noexpand\Umathcodenum`L=\the\Umathcodenum`L\relax
+  \noexpand\Umathcodenum`M=\the\Umathcodenum`M\relax \noexpand\Umathcodenum`N=\the\Umathcodenum`N\relax \noexpand\Umathcodenum`O=\the\Umathcodenum`O\relax \noexpand\Umathcodenum`P=\the\Umathcodenum`P\relax \noexpand\Umathcodenum`Q=\the\Umathcodenum`Q\relax \noexpand\Umathcodenum`R=\the\Umathcodenum`R\relax
+  \noexpand\Umathcodenum`S=\the\Umathcodenum`S\relax \noexpand\Umathcodenum`T=\the\Umathcodenum`T\relax \noexpand\Umathcodenum`U=\the\Umathcodenum`U\relax \noexpand\Umathcodenum`V=\the\Umathcodenum`V\relax \noexpand\Umathcodenum`W=\the\Umathcodenum`W\relax \noexpand\Umathcodenum`X=\the\Umathcodenum`X\relax
+  \noexpand\Umathcodenum`Y=\the\Umathcodenum`Y\relax \noexpand\Umathcodenum`Z=\the\Umathcodenum`Z\relax \noexpand\Umathcodenum`a=\the\Umathcodenum`a\relax \noexpand\Umathcodenum`b=\the\Umathcodenum`b\relax \noexpand\Umathcodenum`c=\the\Umathcodenum`c\relax \noexpand\Umathcodenum`d=\the\Umathcodenum`d\relax
+  \noexpand\Umathcodenum`e=\the\Umathcodenum`e\relax \noexpand\Umathcodenum`f=\the\Umathcodenum`f\relax \noexpand\Umathcodenum`g=\the\Umathcodenum`g\relax \noexpand\Umathcodenum`h=\the\Umathcodenum`h\relax \noexpand\Umathcodenum`i=\the\Umathcodenum`i\relax \noexpand\Umathcodenum`j=\the\Umathcodenum`j\relax
+  \noexpand\Umathcodenum`k=\the\Umathcodenum`k\relax \noexpand\Umathcodenum`l=\the\Umathcodenum`l\relax \noexpand\Umathcodenum`m=\the\Umathcodenum`m\relax \noexpand\Umathcodenum`n=\the\Umathcodenum`n\relax \noexpand\Umathcodenum`o=\the\Umathcodenum`o\relax \noexpand\Umathcodenum`p=\the\Umathcodenum`p\relax
+  \noexpand\Umathcodenum`q=\the\Umathcodenum`q\relax \noexpand\Umathcodenum`r=\the\Umathcodenum`r\relax \noexpand\Umathcodenum`s=\the\Umathcodenum`s\relax \noexpand\Umathcodenum`t=\the\Umathcodenum`t\relax \noexpand\Umathcodenum`u=\the\Umathcodenum`u\relax \noexpand\Umathcodenum`v=\the\Umathcodenum`v\relax
+  \noexpand\Umathcodenum`w=\the\Umathcodenum`w\relax \noexpand\Umathcodenum`x=\the\Umathcodenum`x\relax \noexpand\Umathcodenum`y=\the\Umathcodenum`y\relax \noexpand\Umathcodenum`z=\the\Umathcodenum`z\relax
+}
+\newcommand{\mctex@galacticmathcodes}{%
+  \Umathcode`A="7 "0 "EB40 \Umathcode`B="7 "0 "EB41 \Umathcode`C="7 "0 "EB42 \Umathcode`D="7 "0 "EB43 \Umathcode`E="7 "0 "EB44 \Umathcode`F="7 "0 "EB45
+  \Umathcode`G="7 "0 "EB46 \Umathcode`H="7 "0 "EB47 \Umathcode`I="7 "0 "EB48 \Umathcode`J="7 "0 "EB49 \Umathcode`K="7 "0 "EB4A \Umathcode`L="7 "0 "EB4B
+  \Umathcode`M="7 "0 "EB4C \Umathcode`N="7 "0 "EB4D \Umathcode`O="7 "0 "EB4E \Umathcode`P="7 "0 "EB4F \Umathcode`Q="7 "0 "EB50 \Umathcode`R="7 "0 "EB51
+  \Umathcode`S="7 "0 "EB52 \Umathcode`T="7 "0 "EB53 \Umathcode`U="7 "0 "EB54 \Umathcode`V="7 "0 "EB55 \Umathcode`W="7 "0 "EB56 \Umathcode`X="7 "0 "EB57
+  \Umathcode`Y="7 "0 "EB58 \Umathcode`Z="7 "0 "EB59 \Umathcode`a="7 "0 "EB40 \Umathcode`b="7 "0 "EB41 \Umathcode`c="7 "0 "EB42 \Umathcode`d="7 "0 "EB43
+  \Umathcode`e="7 "0 "EB44 \Umathcode`f="7 "0 "EB45 \Umathcode`g="7 "0 "EB46 \Umathcode`h="7 "0 "EB47 \Umathcode`i="7 "0 "EB48 \Umathcode`j="7 "0 "EB49
+  \Umathcode`k="7 "0 "EB4A \Umathcode`l="7 "0 "EB4B \Umathcode`m="7 "0 "EB4C \Umathcode`n="7 "0 "EB4D \Umathcode`o="7 "0 "EB4E \Umathcode`p="7 "0 "EB4F
+  \Umathcode`q="7 "0 "EB50 \Umathcode`r="7 "0 "EB51 \Umathcode`s="7 "0 "EB52 \Umathcode`t="7 "0 "EB53 \Umathcode`u="7 "0 "EB54 \Umathcode`v="7 "0 "EB55
+  \Umathcode`w="7 "0 "EB56 \Umathcode`x="7 "0 "EB57 \Umathcode`y="7 "0 "EB58 \Umathcode`z="7 "0 "EB59
+}
+
 \DeclareTextFontCommand{\galactic}{\mctex@galacticfont}
+\let\mctex@normalmathbf\mathbf
+\let\mctex@normalmathit\mathit
+\let\mctex@normalsymbf\symbf
+\let\mctex@normalsymbfit\symbfit
+\newcommand{\mctex@galacticmathalphabet}[1]{#1}
 \newcommand{\galacticmode}{%
   \setmainfont{\mctex@fontfile}[\mctex@galacticfeatures]%
   \setsansfont{\mctex@fontfile}[\mctex@galacticfeatures]%
   \setmonofont{\mctex@fontfile}[\mctex@galacticfeatures]%
+  \mctex@galacticmathcodes%
+  \let\mathbf\mctex@galacticmathalphabet%
+  \let\mathit\mctex@galacticmathalphabet%
+  \let\symbf\mctex@galacticmathalphabet%
+  \let\symbfit\mctex@galacticmathalphabet%
 }
 \newcommand{\normalmode}{%
   \setmainfont{\mctex@fontfile}[\mctex@textfeatures]%
   \setsansfont{\mctex@fontfile}[\mctex@textfeatures]%
   \setmonofont{\mctex@fontfile}[\mctex@textfeatures]%
+  \mctex@normalmathcodes%
+  \let\mathbf\mctex@normalmathbf%
+  \let\mathit\mctex@normalmathit%
+  \let\symbf\mctex@normalsymbf%
+  \let\symbfit\mctex@normalsymbfit%
 }
 
 % Table support stays on LaTeX's standard tabular/array path, but snaps the
