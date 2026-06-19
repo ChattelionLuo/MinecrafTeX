@@ -28,6 +28,7 @@ that tell TeX or MathML how to stretch and place the pieces.
 * Fractions, radicals, big operators, and stretchy delimiters are driven by the font's OpenType MATH table.
 * Math alphabets such as `\mathbb`, bold, italic, script, fraktur, sans, and monospace are mapped back to pixel glyphs instead of falling through to Latin Modern.
 * Common missing operators and relations are included: `≤ ≥ ≈ ∼ ∈ ∋ ∇ ⋅ ∪ ∅`, plus display variants for `∫`, `∑`, and `∏`.
+* Standard Galactic Alphabet text is available with `\galactic{Hello World.}`.
 
 ## How it works
 

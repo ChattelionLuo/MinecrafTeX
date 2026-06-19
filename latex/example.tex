@@ -122,23 +122,23 @@ A piecewise definition uses a tall growing brace:
     -x, & x < 0.
   \end{cases}
 \]
-\newpage
-\heading{6.\quad Linear-programming duality block}
+
+\heading{6.\quad Large matrices and blocks}
 
 A larger constraint display stresses wide arrays, vertical rules, vector
 brackets, transposes and inequalities from the same source code:
 \[
-  \min_{\Gamma}\{\Gamma^{\mathrm T}\mathbf{C}\;|\;
-  \mathbf{A}\Gamma=\mathbf{b},\ \Gamma\geq0\}
+  \min_{\Gamma}\left\{\Gamma^{\mathrm T}\mathbf{C}\;|\;
+  \mathbf{A}\Gamma=\mathbf{b},\ \Gamma\geq0\right\}
   =
-  \max_{F}\{\mathbf{b}^{\mathrm T}F\;|\;
-  \mathbf{A}^{\mathrm T}F\leq\mathbf{C}\}.
+  \max_{F}\left\{\mathbf{b}^{\mathrm T}F\;|\;
+  \mathbf{A}^{\mathrm T}F\leq\mathbf{C}\right\}.
 \]
 \[
 \resizebox{\textwidth}{!}{$\displaystyle
 \underset{\mathbf{A}^{\mathrm T}}{
 \left[
-\begin{array}{ccccc|ccccc}
+\begin{array}{cccccccccc}
 1&0&\mcthdots&0&\mcthdots&1&0&\mcthdots&0&\mcthdots\\
 1&0&\mcthdots&0&\mcthdots&0&1&\mcthdots&0&\mcthdots\\
 \mctvdots&\mctvdots&\mctddots&\mctvdots&\mctddots&\mctvdots&\mctvdots&\mctddots&\mctvdots&\mctddots\\
@@ -220,6 +220,13 @@ Math alphabets use variant outlines instead of falling back:
   x + \mathbf{x} + \symbfit{x},
   \qquad
   \alpha + \mathbf{\alpha} + \symbfit{\alpha}.
+\]
+
+The Standard Galactic Alphabet is available as a text feature:
+\[
+  \galactic{Hello World.}
+  \qquad
+  \text{letters change; punctuation stays put.}
 \]
 
 \end{document}

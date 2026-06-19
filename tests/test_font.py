@@ -121,6 +121,24 @@ def test_added_relation_glyphs_present(font):
         assert cp in cmap, f"missing U+{cp:04X}"
 
 
+def test_standard_galactic_glyphs_and_feature_present(font):
+    cmap = font.getBestCmap()
+    for cp in range(0xEB40, 0xEB5A):
+        assert cp in cmap, f"missing SGA glyph U+{cp:04X}"
+    features = font["GSUB"].table.FeatureList.FeatureRecord
+    ss01 = next((feature.Feature for feature in features
+                 if feature.FeatureTag == "ss01"), None)
+    assert ss01 is not None
+    lookups = font["GSUB"].table.LookupList.Lookup
+    mappings = {}
+    for lookup_index in ss01.LookupListIndex:
+        lookup = lookups[lookup_index]
+        for subtable in lookup.SubTable:
+            mappings.update(getattr(subtable, "mapping", {}))
+    assert mappings[cmap[ord("a")]] == cmap[0xEB40]
+    assert mappings[cmap[ord("A")]] == cmap[0xEB40]
+
+
 def test_math_alphanumeric_aliased(font):
     """Math alphabet letters (including default italic variables) must map so
     unicode-math does not fall back to Latin Modern serif."""

@@ -7,6 +7,8 @@
 %%     \usepackage{minecraftex}                         % proportional spacing
 %%     \usepackage[scale=1.4]{minecraftex}              % scale the pixel font up
 %%     \usepackage[spacing=mono]{minecraftex}           % fixed-cell spacing
+%%     \galactic{Hello World.}                          % Standard Galactic text
+%%     \galacticmode ... \normalmode                    % document-level switch
 %%
 \NeedsTeXFormat{LaTeX2e}
 \ProvidesPackage{minecraftex}[2026/06/16 v0.1 MinecrafTeX pixel math]
@@ -47,6 +49,14 @@
   ItalicFont=\mctex@italicfontfile ,
   BoldItalicFont=\mctex@bolditalicfontfile ,
 }
+\newcommand{\mctex@galacticfeatures}{%
+  Path=\mctex@fontpath ,
+  Scale=\mctex@scale ,
+  BoldFont=\mctex@boldfontfile ,
+  ItalicFont=\mctex@italicfontfile ,
+  BoldItalicFont=\mctex@bolditalicfontfile ,
+  RawFeature=+ss01 ,
+}
 
 \RequirePackage{fontspec}
 \RequirePackage{unicode-math}
@@ -66,6 +76,19 @@
 \setmainfont{\mctex@fontfile}[\mctex@textfeatures]
 \setsansfont{\mctex@fontfile}[\mctex@textfeatures]
 \setmonofont{\mctex@fontfile}[\mctex@textfeatures]
+\newfontfamily\mctex@galacticfont{\mctex@fontfile}[\mctex@galacticfeatures]
+
+\DeclareTextFontCommand{\galactic}{\mctex@galacticfont}
+\newcommand{\galacticmode}{%
+  \setmainfont{\mctex@fontfile}[\mctex@galacticfeatures]%
+  \setsansfont{\mctex@fontfile}[\mctex@galacticfeatures]%
+  \setmonofont{\mctex@fontfile}[\mctex@galacticfeatures]%
+}
+\newcommand{\normalmode}{%
+  \setmainfont{\mctex@fontfile}[\mctex@textfeatures]%
+  \setsansfont{\mctex@fontfile}[\mctex@textfeatures]%
+  \setmonofont{\mctex@fontfile}[\mctex@textfeatures]%
+}
 
 % Table support stays on LaTeX's standard tabular/array path, but snaps the
 % visible rules and padding to the same blocky rhythm as the font. One font
