@@ -18,6 +18,7 @@ from pixelfont import FontSpec, build_font, save  # noqa: E402
 from monocraft_loader import load_base_glyphs  # noqa: E402
 from math_glyphs import math_extra_glyphs  # noqa: E402
 from math_alphanum import alphanumeric_aliases  # noqa: E402
+from math_variants import styled_math_glyphs  # noqa: E402
 from math_table import add_math_table  # noqa: E402
 from gsub import add_math_script  # noqa: E402
 
@@ -65,13 +66,25 @@ def collect_glyphs(proportional: bool = False):
         if g.codepoint is not None and g.codepoint in taken:
             continue
         glyphs.append(g)
+        if g.codepoint is not None:
+            taken.add(g.codepoint)
+    glyph_by_cp = {g.codepoint: g for g in glyphs if g.codepoint is not None}
+    for g in styled_math_glyphs(glyph_by_cp):
+        if g.codepoint is not None and g.codepoint in taken:
+            continue
+        glyphs.append(g)
+        if g.codepoint is not None:
+            taken.add(g.codepoint)
     return glyphs
 
 
-def build_one(filename: str, family: str, proportional: bool) -> None:
+def build_one(filename: str, family: str, proportional: bool,
+              style: str = "Regular", bold: bool = False,
+              italic: bool = False) -> None:
     glyphs = collect_glyphs(proportional=proportional)
-    # Alias the Mathematical Alphanumeric Symbols (math italic/bold/... letters
-    # and digits) onto the plain pixel glyphs so they render as pixels.
+    # Alias math alphabet styles that do not yet have dedicated transformed
+    # outlines; bold and bold-italic planes are real glyphs from
+    # math_variants.py.
     name_by_cp = {g.codepoint: g.name for g in glyphs if g.codepoint is not None}
     aliases = alphanumeric_aliases(name_by_cp)
     # A few long/extra symbols unicode-math requests that reuse a base glyph.
@@ -79,7 +92,17 @@ def build_one(filename: str, family: str, proportional: bool) -> None:
         base = name_by_cp.get(base_cp)
         if base is not None and cp not in name_by_cp:
             aliases.setdefault(cp, base)
-    spec = FontSpec(family=family, glyphs=glyphs, extra_cmap=aliases)
+    spec = FontSpec(
+        family=family,
+        style=style,
+        glyphs=glyphs,
+        extra_cmap=aliases,
+        bold=bold,
+        italic=italic,
+        italic_angle=-15 if italic else 0,
+        slant_degrees=15 if italic else 0,
+        embolden_px=0.2 if bold else 0,
+    )
     font = build_font(spec)
     add_math_table(font)
     add_math_script(font, anchor_glyph="space")
@@ -103,6 +126,12 @@ def main() -> None:
     build_one("MinecrafTeX-Math.ttf", "MinecrafTeX Math", proportional=False)
     build_one("MinecrafTeX-Math-Proportional.ttf", "MinecrafTeX Math Proportional",
               proportional=True)
+    build_one("MinecrafTeX-Math-Proportional-Bold.ttf", "MinecrafTeX Math Proportional",
+              proportional=True, style="Bold", bold=True)
+    build_one("MinecrafTeX-Math-Proportional-Italic.ttf", "MinecrafTeX Math Proportional",
+              proportional=True, style="Italic", italic=True)
+    build_one("MinecrafTeX-Math-Proportional-BoldItalic.ttf", "MinecrafTeX Math Proportional",
+              proportional=True, style="Bold Italic", bold=True, italic=True)
 
 
 if __name__ == "__main__":

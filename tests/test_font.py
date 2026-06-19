@@ -9,6 +9,8 @@ from fontTools.ttLib import TTFont
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TTF = os.path.join(ROOT, "font", "dist", "MinecrafTeX-Math.ttf")
 PROP_TTF = os.path.join(ROOT, "font", "dist", "MinecrafTeX-Math-Proportional.ttf")
+PROP_BOLD_TTF = os.path.join(ROOT, "font", "dist", "MinecrafTeX-Math-Proportional-Bold.ttf")
+PROP_ITALIC_TTF = os.path.join(ROOT, "font", "dist", "MinecrafTeX-Math-Proportional-Italic.ttf")
 
 
 @pytest.fixture(scope="module")
@@ -85,6 +87,32 @@ def test_proportional_font_has_natural_text_metrics():
     assert hmtx[cmap[ord("i")]][1] == 50
 
 
+def test_proportional_text_style_fonts_present():
+    if not os.path.exists(PROP_BOLD_TTF) or not os.path.exists(PROP_ITALIC_TTF):
+        subprocess.run([sys.executable, os.path.join(ROOT, "font", "build_font.py")],
+                       check=True)
+    bold = TTFont(PROP_BOLD_TTF)
+    italic = TTFont(PROP_ITALIC_TTF)
+    assert bold["OS/2"].usWeightClass == 700
+    assert bold["head"].macStyle & 0x01
+    assert italic["post"].italicAngle == -15
+    assert italic["head"].macStyle & 0x02
+
+
+def test_default_math_is_upright_but_bold_variants_are_real(font):
+    cmap = font.getBestCmap()
+    glyf = font["glyf"]
+    plain_x = cmap[ord("x")]
+    bold_x = cmap[0x1D431]  # MATHEMATICAL BOLD SMALL X
+    italic_x = cmap[0x1D465]  # MATHEMATICAL ITALIC SMALL X, used for default x
+    bolditalic_x = cmap[0x1D499]  # MATHEMATICAL BOLD ITALIC SMALL X
+    assert bold_x != plain_x
+    assert italic_x == plain_x
+    assert bolditalic_x != plain_x
+    assert glyf[bold_x].xMin < glyf[plain_x].xMin
+    assert glyf[bolditalic_x].xMax > glyf[plain_x].xMax
+
+
 def test_added_relation_glyphs_present(font):
     """Common relations/operators Monocraft lacks are now drawn as pixels."""
     cmap = font.getBestCmap()
@@ -94,7 +122,7 @@ def test_added_relation_glyphs_present(font):
 
 
 def test_math_alphanumeric_aliased(font):
-    """Math italic/bold letters (and italic phi) must map to pixel glyphs so
+    """Math alphabet letters (including default italic variables) must map so
     unicode-math does not fall back to Latin Modern serif."""
     cmap = font.getBestCmap()
     for cp in (0x1D465,  # math italic x

@@ -6,10 +6,12 @@ Mathematical Alphanumeric Symbols block (U+1D400-U+1D7FF): e.g. a math italic
 none of these, so without them every math *letter* falls back to Latin Modern
 (the small serif italics seen in the broken renders).
 
-MinecrafTeX has a single upright pixel style, so we simply alias every style
-plane (bold, italic, script, fraktur, double-struck, sans, monospace, ...) back
-to the same base pixel glyph.  That keeps all math letters as authentic pixels
-and lets unicode-math accept the font as a complete primary math font.
+MinecrafTeX has dedicated transformed glyphs for the common bold and bold-italic
+math planes. Ordinary math italic codepoints stay aliased to upright pixels so
+default variables keep the original MinecrafTeX look. The remaining style planes
+(script, fraktur, double-struck, sans, monospace, ...) are also aliased back to
+base pixel glyphs. That keeps all math letters as authentic pixels and lets
+unicode-math accept the font as a complete primary math font.
 
 `alphanumeric_aliases(name_by_cp)` returns ``{codepoint: glyph_name}`` aliases,
 reusing existing glyph outlines (no duplicated contours).

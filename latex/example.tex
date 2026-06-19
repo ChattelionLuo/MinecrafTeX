@@ -8,11 +8,15 @@
 \documentclass[11pt]{article}
 \usepackage[a4paper,margin=2.2cm]{geometry}
 \usepackage{amsmath}
+\usepackage{graphicx}
 \usepackage[scale=1.5]{minecraftex}
 
 \setlength{\parindent}{0pt}
 \setlength{\parskip}{6pt}
 \newcommand{\heading}[1]{\bigskip{\Large #1}\par\nobreak\smallskip}
+\newcommand{\mcthdots}{.\,.\,.}
+\newcommand{\mctvdots}{\mathinner{\vcenter{\offinterlineskip\hbox{.}\kern.18em\hbox{.}\kern.18em\hbox{.}}}}
+\newcommand{\mctddots}{\mathinner{\vcenter{\offinterlineskip\hbox{.}\kern.18em\hbox{\kern.45em.}\kern.18em\hbox{\kern.9em.}}}}
 
 \begin{document}
 
@@ -22,23 +26,30 @@
 \end{center}
 
 \bigskip
+\noindent
+\begin{minipage}[t]{0.80\textwidth}
+\vspace{0pt}
 Every symbol on these two pages -- the prose, the Greek letters $\alpha,\beta,
 \gamma,\pi$, the operators, and the equations -- is drawn from one pixel font.
 The delimiters, roots and big operators stretch to fit, so the layout matches
 what LaTeX would produce with any other math font.
-
-\includegraphics[width=0.3\textwidth]{qrcode.png}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.18\textwidth}
+\vspace{0pt}
+\raggedleft
+\includegraphics[width=\linewidth]{qrcode.png}
+\end{minipage}
 
 \heading{1.\quad Fractions and continued fractions}
 
 A fraction bar sits on the math axis and the surrounding delimiters grow to
 wrap whatever they contain:
 \[
-  \frac{a+b}{c+d}
+  \frac{a+b}{c+d},
   \qquad
-  \left( \frac{1}{2} + \frac{x}{y} \right)
+  \left( \frac{1}{2} + \frac{x}{y} \right),
   \qquad
-  \binom{n}{k} = \frac{n!}{k!\,(n-k)!}.
+  \binom{n}{k} = \frac{n!}{k!\,(n-k)!},
 \]
 \[
 i h \frac{\partial}{\partial t} \Psi(x, t)=\left[-\frac{h^2}{2 m} \frac{\partial^2}{\partial x^2}+V(x, t)\right] \Psi(x, t) .
@@ -76,7 +87,7 @@ Derivatives, limits and definite integrals with stretchy operators:
   \int_{a}^{b} f'(x)\,dx = f(b) - f(a).
 \]
 
-\newpage
+\pagebreak[2]
 
 \heading{4.\quad Series and products}
 
@@ -111,8 +122,76 @@ A piecewise definition uses a tall growing brace:
     -x, & x < 0.
   \end{cases}
 \]
+\newpage
+\heading{6.\quad Linear-programming duality block}
 
-\heading{6.\quad Greek, relations and aligned work}
+A larger constraint display stresses wide arrays, vertical rules, vector
+brackets, transposes and inequalities from the same source code:
+\[
+  \min_{\Gamma}\{\Gamma^{\mathrm T}\mathbf{C}\;|\;
+  \mathbf{A}\Gamma=\mathbf{b},\ \Gamma\geq0\}
+  =
+  \max_{F}\{\mathbf{b}^{\mathrm T}F\;|\;
+  \mathbf{A}^{\mathrm T}F\leq\mathbf{C}\}.
+\]
+\[
+\resizebox{\textwidth}{!}{$\displaystyle
+\underset{\mathbf{A}^{\mathrm T}}{
+\left[
+\begin{array}{ccccc|ccccc}
+1&0&\mcthdots&0&\mcthdots&1&0&\mcthdots&0&\mcthdots\\
+1&0&\mcthdots&0&\mcthdots&0&1&\mcthdots&0&\mcthdots\\
+\mctvdots&\mctvdots&\mctddots&\mctvdots&\mctddots&\mctvdots&\mctvdots&\mctddots&\mctvdots&\mctddots\\
+0&1&\mcthdots&0&\mcthdots&1&0&\mcthdots&0&\mcthdots\\
+0&1&\mcthdots&0&\mcthdots&0&1&\mcthdots&0&\mcthdots\\
+\mctvdots&\mctvdots&\mctddots&\mctvdots&\mctddots&\mctvdots&\mctvdots&\mctddots&\mctvdots&\mctddots\\
+0&0&\mcthdots&1&\mcthdots&1&0&\mcthdots&0&\mcthdots\\
+0&0&\mcthdots&1&\mcthdots&0&1&\mcthdots&0&\mcthdots\\
+\mctvdots&\mctvdots&\mctddots&\mctvdots&\mctddots&\mctvdots&\mctvdots&\mctddots&\mctvdots&\mctddots
+\end{array}
+\right]}
+\underset{F}{
+\left[
+\begin{array}{c}
+f_g^w(x=1)\\
+f_g^w(x=2)\\
+\mctvdots\\
+f_g^w(x=n)\\
+f_r^w(y=1)\\
+f_r^w(y=2)\\
+\mctvdots\\
+f_r^w(y=n)\\
+\mctvdots
+\end{array}
+\right]}
+\leq
+\underset{\mathbf{C}}{
+\left[
+\begin{array}{c}
+d(1,1)\\
+d(1,2)\\
+\mctvdots\\
+d(2,1)\\
+d(2,2)\\
+\mctvdots\\
+d(n,1)\\
+d(n,2)\\
+\mctvdots
+\end{array}
+\right]}
+$}
+\]
+
+Pick any row of $\mathbf{A}^{\mathrm T}$, which gives
+\[
+  f_g^w(x=i)+f_r^w(y=j)\leq d(i,j).
+\]
+With $i\to x$ and $j\to y$,
+\[
+  f_g^w(x)+f_r^w(y)\leq d(x,y)\qquad\forall x,y.
+\]
+
+\heading{7.\quad Greek, relations and aligned work}
 
 Lowercase and uppercase Greek share the same pixel grid as the Latin letters:
 \[
@@ -128,5 +207,19 @@ $=,\ \leq,\ \geq,\ \neq,\ \approx$ all in pixels:
             &\geq 4x \\
             &\neq x^{2} - 1 \qquad (x \neq 0).
 \end{align*}
+
+Text styles use MinecrafTeX variants too:
+\[
+  \text{regular},\qquad
+  \textit{italic},\qquad
+  \textbf{bold},\qquad
+  \textbf{\textit{bold italic}}.
+\]
+Math alphabets use variant outlines instead of falling back:
+\[
+  x + \mathbf{x} + \symbfit{x},
+  \qquad
+  \alpha + \mathbf{\alpha} + \symbfit{\alpha}.
+\]
 
 \end{document}

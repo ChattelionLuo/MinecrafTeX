@@ -20,7 +20,7 @@ output crisp: glyph edges always land on whole-pixel boundaries.
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Iterable
+import math
 
 from fontTools.fontBuilder import FontBuilder
 from fontTools.pens.ttGlyphPen import TTGlyphPen
@@ -63,6 +63,8 @@ class Glyph:
     # uses a few half-pixel side bearings; preserving them keeps narrow letters
     # and punctuation optically centred instead of left-pinned in a fixed cell.
     x_offset_px: float = 0.0
+    embolden_px: float = 0.0
+    slant_degrees: float = 0.0
     # y (in pixels) of the bottom-most art row relative to the baseline.
     # 0 => art sits on the baseline; -2 => art bottom is two px below baseline.
     bottom_px: int = 0
@@ -97,14 +99,33 @@ def _merge_horizontal_runs(rows: list[str]) -> list[tuple[int, int, int]]:
     return runs
 
 
-def _ink_x_bounds(rows: list[str]) -> tuple[int, int] | None:
-    xs = [x for row in rows for x, cell in enumerate(row) if cell in "#X"]
-    if not xs:
-        return None
-    return min(xs), max(xs) + 1
+def _transform_point(x: int, y: int, *, slant: float) -> tuple[int, int]:
+    if slant:
+        x = int(round(x + y * slant))
+    return x, y
 
 
-def draw_glyph(glyph: Glyph) -> "TTGlyphPen":
+def _transformed_x_min(glyph: Glyph, *, embolden_px: float,
+                       slant_degrees: float) -> int:
+    embolden = int(round(embolden_px * PIXEL))
+    slant = math.tan(math.radians(slant_degrees)) if slant_degrees else 0.0
+    x_offset = int(round(glyph.x_offset_px * PIXEL))
+    bottom = glyph.bottom_px * PIXEL
+    xs: list[int] = []
+    h = len(glyph.rows)
+    for r, x_start, length in _merge_horizontal_runs(glyph.rows):
+        y_top_px = h - r
+        y0 = bottom + (y_top_px - 1) * PIXEL - embolden
+        y1 = bottom + y_top_px * PIXEL + embolden
+        x0 = x_offset + x_start * PIXEL - embolden
+        x1 = x_offset + (x_start + length) * PIXEL + embolden
+        for x, y in ((x0, y0), (x0, y1), (x1, y0), (x1, y1)):
+            xs.append(_transform_point(x, y, slant=slant)[0])
+    return min(xs) if xs else 0
+
+
+def draw_glyph(glyph: Glyph, *, embolden_px: float = 0.0,
+               slant_degrees: float = 0.0) -> "TTGlyphPen":
     """Render a Glyph to a TTGlyphPen as axis-aligned rectangles.
 
     Each horizontal run of on-pixels becomes one rectangle contour wound
@@ -115,6 +136,8 @@ def draw_glyph(glyph: Glyph) -> "TTGlyphPen":
     rows = glyph.rows
     h = len(rows)
     x_offset = int(round(glyph.x_offset_px * PIXEL))
+    embolden = int(round(embolden_px * PIXEL))
+    slant = math.tan(math.radians(slant_degrees)) if slant_degrees else 0.0
     # Pixel grid -> font units. The bottom art row maps to y = bottom_px*PIXEL.
     bottom = glyph.bottom_px * PIXEL
     for (r, x_start, length) in _merge_horizontal_runs(rows):
@@ -122,12 +145,14 @@ def draw_glyph(glyph: Glyph) -> "TTGlyphPen":
         y_top_px = (h - r)            # top edge of this pixel row, in px from art bottom
         y0 = bottom + (y_top_px - 1) * PIXEL    # bottom edge of the pixel row
         y1 = bottom + y_top_px * PIXEL          # top edge
-        x0 = x_offset + x_start * PIXEL
-        x1 = x_offset + (x_start + length) * PIXEL
-        pen.moveTo((x0, y0))
-        pen.lineTo((x0, y1))
-        pen.lineTo((x1, y1))
-        pen.lineTo((x1, y0))
+        x0 = x_offset + x_start * PIXEL - embolden
+        x1 = x_offset + (x_start + length) * PIXEL + embolden
+        y0 -= embolden
+        y1 += embolden
+        pen.moveTo(_transform_point(x0, y0, slant=slant))
+        pen.lineTo(_transform_point(x0, y1, slant=slant))
+        pen.lineTo(_transform_point(x1, y1, slant=slant))
+        pen.lineTo(_transform_point(x1, y0, slant=slant))
         pen.closePath()
     return pen
 
@@ -138,9 +163,14 @@ class FontSpec:
     style: str = "Regular"
     version: str = "0.1.0"
     glyphs: list[Glyph] = field(default_factory=list)
+    bold: bool = False
+    italic: bool = False
+    italic_angle: float = 0.0
+    slant_degrees: float = 0.0
+    embolden_px: float = 0.0
     # Extra cmap entries: codepoint -> existing glyph name (aliases, no new
-    # outline). Used to point the Mathematical Alphanumeric Symbols at the
-    # plain pixel letters so math italic/bold/... letters render as pixels.
+    # outline). Used for math alphabet styles that do not yet have dedicated
+    # transformed outlines.
     extra_cmap: dict[int, str] = field(default_factory=dict)
 
 
@@ -169,13 +199,14 @@ def build_font(spec: FontSpec) -> TTFont:
     metrics[".notdef"] = (6 * PIXEL, 0)
 
     for g in spec.glyphs:
-        pen = draw_glyph(g)
-        glyf[g.name] = pen.glyph()
-        bounds = _ink_x_bounds(g.rows)
-        if bounds is None:
-            left_side_bearing = 0
-        else:
-            left_side_bearing = int(round((g.x_offset_px + bounds[0]) * PIXEL))
+        embolden_px = spec.embolden_px + g.embolden_px
+        slant_degrees = spec.slant_degrees + g.slant_degrees
+        pen = draw_glyph(g, embolden_px=embolden_px,
+                         slant_degrees=slant_degrees)
+        glyph = pen.glyph()
+        glyf[g.name] = glyph
+        left_side_bearing = _transformed_x_min(g, embolden_px=embolden_px,
+                                               slant_degrees=slant_degrees)
         metrics[g.name] = (int(round(g.advance_px * PIXEL)), left_side_bearing)
 
     fb.setupGlyf(glyf)
@@ -191,12 +222,24 @@ def build_font(spec: FontSpec) -> TTFont:
         "uniqueFontIdentifier": f"MinecrafTeX;{spec.family};{spec.version}",
     }
     fb.setupNameTable(name_strings)
+    fs_selection = 0
+    if spec.italic:
+        fs_selection |= 0x01
+    if spec.bold:
+        fs_selection |= 0x20
+    if not spec.bold and not spec.italic:
+        fs_selection |= 0x40
     fb.setupOS2(sTypoAscender=ASCENT, sTypoDescender=DESCENT,
                 usWinAscent=ASCENT, usWinDescent=-DESCENT,
-                sxHeight=X_HEIGHT, sCapHeight=CAP_HEIGHT)
-    fb.setupPost()
+                sxHeight=X_HEIGHT, sCapHeight=CAP_HEIGHT,
+                usWeightClass=700 if spec.bold else 400,
+                fsSelection=fs_selection)
+    fb.setupPost(italicAngle=spec.italic_angle)
 
-    return fb.font
+    font = fb.font
+    font["head"].macStyle = (0x01 if spec.bold else 0) | (0x02 if spec.italic else 0)
+
+    return font
 
 
 def save(font: TTFont, path: str) -> None:

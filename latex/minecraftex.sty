@@ -22,14 +22,31 @@
 \ProcessKeyvalOptions*
 
 \newcommand{\mctex@fontfile}{MinecrafTeX-Math-Proportional.ttf}
+\newcommand{\mctex@boldfontfile}{MinecrafTeX-Math-Proportional-Bold.ttf}
+\newcommand{\mctex@italicfontfile}{MinecrafTeX-Math-Proportional-Italic.ttf}
+\newcommand{\mctex@bolditalicfontfile}{MinecrafTeX-Math-Proportional-BoldItalic.ttf}
 \edef\mctex@monospacing{mono}
 \edef\mctex@fixedspacing{monospace}
 \ifx\mctex@spacing\mctex@monospacing
   \renewcommand{\mctex@fontfile}{MinecrafTeX-Math.ttf}
+  \renewcommand{\mctex@boldfontfile}{MinecrafTeX-Math.ttf}
+  \renewcommand{\mctex@italicfontfile}{MinecrafTeX-Math.ttf}
+  \renewcommand{\mctex@bolditalicfontfile}{MinecrafTeX-Math.ttf}
 \fi
 \ifx\mctex@spacing\mctex@fixedspacing
   \renewcommand{\mctex@fontfile}{MinecrafTeX-Math.ttf}
+  \renewcommand{\mctex@boldfontfile}{MinecrafTeX-Math.ttf}
+  \renewcommand{\mctex@italicfontfile}{MinecrafTeX-Math.ttf}
+  \renewcommand{\mctex@bolditalicfontfile}{MinecrafTeX-Math.ttf}
 \fi
+
+\newcommand{\mctex@textfeatures}{%
+  Path=\mctex@fontpath ,
+  Scale=\mctex@scale ,
+  BoldFont=\mctex@boldfontfile ,
+  ItalicFont=\mctex@italicfontfile ,
+  BoldItalicFont=\mctex@bolditalicfontfile ,
+}
 
 \RequirePackage{fontspec}
 \RequirePackage{unicode-math}
@@ -41,18 +58,14 @@
   Path=\mctex@fontpath ,
   Scale=\mctex@scale ,
 ]
-\setmainfont{\mctex@fontfile}[
+\setmathfont{\mctex@boldfontfile}[
   Path=\mctex@fontpath ,
   Scale=\mctex@scale ,
+  version=bold,
 ]
-\setsansfont{\mctex@fontfile}[
-  Path=\mctex@fontpath ,
-  Scale=\mctex@scale ,
-]
-\setmonofont{\mctex@fontfile}[
-  Path=\mctex@fontpath ,
-  Scale=\mctex@scale ,
-]
+\setmainfont{\mctex@fontfile}[\mctex@textfeatures]
+\setsansfont{\mctex@fontfile}[\mctex@textfeatures]
+\setmonofont{\mctex@fontfile}[\mctex@textfeatures]
 
 % Table support stays on LaTeX's standard tabular/array path, but snaps the
 % visible rules and padding to the same blocky rhythm as the font. One font

@@ -9,6 +9,12 @@ const files = [
   "MinecrafTeX-Math.woff2",
   "MinecrafTeX-Math-Proportional.ttf",
   "MinecrafTeX-Math-Proportional.woff2",
+  "MinecrafTeX-Math-Proportional-Bold.ttf",
+  "MinecrafTeX-Math-Proportional-Bold.woff2",
+  "MinecrafTeX-Math-Proportional-Italic.ttf",
+  "MinecrafTeX-Math-Proportional-Italic.woff2",
+  "MinecrafTeX-Math-Proportional-BoldItalic.ttf",
+  "MinecrafTeX-Math-Proportional-BoldItalic.woff2",
 ];
 
 fs.mkdirSync(targetDir, { recursive: true });
