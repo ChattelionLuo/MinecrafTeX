@@ -15,8 +15,8 @@ math syntax such as `\frac`, `\sqrt`, `\int`, `\sum`, scripts, matrices, and
 that tell TeX or MathML how to stretch and place the pieces.
 
 <p align="center">
-  <img src="tests/example_p1.png" alt="MinecrafTeX showcase page" width="48%">
-  <img src="tests/clt_p1.png"     alt="Central Limit Theorem in MinecrafTeX" width="48%">
+  <img src="tests/promo_p1.png" alt="MinecrafTeX promotional showcase page 1" width="48%">
+  <img src="tests/promo_p2.png" alt="MinecrafTeX promotional showcase page 2" width="48%">
 </p>
 
 ---
@@ -85,18 +85,6 @@ npm run serve      # then open the demo in your browser
 ```
 
 See [`web/demo/index.html`](web/demo/index.html) for a live LaTeX → pixel-MathML demo.
-
-## Build the font yourself
-
-```bash
-pip install fonttools brotli
-python font/build_font.py        # -> TTF/WOFF2 fonts
-python -m pytest tests/test_font.py -q
-python tests/validate.py         # sanity-check + render sample PNGs
-```
-
-The whole grid is pixel-snapped: `UPM = 1000`, `1px = 100 units`, so every
-edge, bar and gap lands on a whole-pixel boundary and stays sharp at any scale.
 
 ## Repository layout
 
